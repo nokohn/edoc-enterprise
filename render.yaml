@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: edoc-lao-enterprise
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run db:generate --workspace=server && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: UPLOAD_DIR
+        value: ./uploads

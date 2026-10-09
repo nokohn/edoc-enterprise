@@ -1,0 +1,416 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: 'Noto Sans Lao', 'Phetsarath OT', 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #f8fafc;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Print Stylesheet for A4 Document Tracking Sheets & Official Reports */
+@media print {
+  html, body {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #printable-tracking-sheet, #printable-tracking-sheet *,
+  #printable-report, #printable-report * {
+    visibility: visible;
+  }
+
+  #printable-tracking-sheet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 10mm;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  #printable-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 275mm !important;
+    margin: 0 !important;
+    padding: 6mm 8mm !important;
+    background: white !important;
+    color: black !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    border: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  #printable-report table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+  }
+
+  #printable-report th,
+  #printable-report td {
+    border: 1px solid #0f172a !important;
+    word-break: break-word !important;
+  }
+
+  #printable-report tr {
+    page-break-inside: avoid !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+}
+
+/* ============================================================
+   SweetAlert2 Modern Animations & 60px Large Button Theme
+   ============================================================ */
+
+/* Spring Pop-in Animation */
+@keyframes swal2-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(-30px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08) translateY(6px);
+  }
+  75% {
+    transform: scale(0.97) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Exit Pop-out Animation */
+@keyframes swal2-pop-out {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7) translateY(25px);
+  }
+}
+
+/* Backdrop Fade-in with Blur */
+@keyframes swal2-backdrop-fade {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* Success Checkmark & Pulse */
+@keyframes swal2-icon-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) rotate(-20deg);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.28) rotate(6deg);
+  }
+  80% {
+    transform: scale(0.95) rotate(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.1) rotate(0deg);
+  }
+}
+
+/* Shake Animation for Warning & Error */
+@keyframes swal2-icon-shake {
+  0%, 100% { transform: scale(1.1) translateX(0); }
+  15%, 45%, 75% { transform: scale(1.15) translateX(-8px); }
+  30%, 60%, 90% { transform: scale(1.15) translateX(8px); }
+}
+
+/* Ring Pulse Effect */
+@keyframes swal2-ring-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 22px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Toast Slide-In Pop Up Animation */
+@keyframes swal2-toast-pop-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(120%, -15px, 0) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(-10px, 3px, 0) scale(1.04);
+  }
+  85% {
+    transform: translate3d(4px, -1px, 0) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+body .swal2-container {
+  z-index: 99999 !important;
+  backdrop-filter: blur(8px) saturate(120%) !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  animation: swal2-backdrop-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+body .swal2-container.swal2-backdrop-hide {
+  opacity: 0 !important;
+  transition: opacity 0.25s ease-out !important;
+}
+
+body .swal2-container .swal2-popup {
+  font-family: var(--font-sans) !important;
+  border-radius: 2rem !important;
+  padding: 2.25rem 2.5rem !important;
+  max-width: min(850px, 96vw) !important;
+  width: auto !important;
+  box-shadow: 0 25px 60px -12px rgba(15, 23, 42, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.6) inset !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  animation: swal2-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+  transform-origin: center center !important;
+  will-change: transform, opacity !important;
+}
+
+body .swal2-container .swal2-popup.swal2-hide {
+  animation: swal2-pop-out 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+body .swal2-container .swal2-popup .swal2-title,
+body .swal2-container h2#swal2-title,
+body h2.swal2-title {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  line-height: 1.4 !important;
+  margin: 0.75rem 0 0.5rem 0 !important;
+  padding: 0 !important;
+}
+
+body .swal2-container .swal2-popup .swal2-html-container,
+body .swal2-container #swal2-html-container {
+  font-size: 18px !important;
+  color: #475569 !important;
+  line-height: 1.6 !important;
+  margin: 0.5rem 0 1rem 0 !important;
+  padding: 0 0.5rem !important;
+}
+
+/* Alert Icon Animations */
+body .swal2-container .swal2-icon {
+  margin: 0.75rem auto 0.75rem auto !important;
+  transform: scale(1.1) !important;
+  will-change: transform !important;
+}
+
+body .swal2-container .swal2-icon.swal2-success {
+  animation: swal2-icon-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, swal2-ring-pulse 2s infinite !important;
+  border-color: #22c55e !important;
+  color: #22c55e !important;
+}
+
+body .swal2-container .swal2-icon.swal2-warning {
+  animation: swal2-icon-shake 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  border-color: #f59e0b !important;
+  color: #f59e0b !important;
+}
+
+body .swal2-container .swal2-icon.swal2-error {
+  animation: swal2-icon-shake 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+}
+
+body .swal2-container .swal2-icon.swal2-info,
+body .swal2-container .swal2-icon.swal2-question {
+  animation: swal2-icon-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+body .swal2-container .swal2-input,
+body .swal2-container .swal2-textarea {
+  font-family: var(--font-sans) !important;
+  font-size: 18px !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 0.75rem 1rem !important;
+  margin: 0.75rem auto !important;
+  box-shadow: none !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+body .swal2-container .swal2-input:focus,
+body .swal2-container .swal2-textarea:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  outline: none !important;
+}
+
+body .swal2-container .swal2-input-label {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-bottom: 0.35rem !important;
+}
+
+body .swal2-container .swal2-actions {
+  margin: 1.75rem 0 0.5rem 0 !important;
+  gap: 1.25rem !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+}
+
+/* 60px Large Font for All SweetAlert 2 Buttons with Interactive Spring Animation */
+body .swal2-container .swal2-actions button,
+body .swal2-container .swal2-actions .swal2-confirm,
+body .swal2-container .swal2-actions .swal2-cancel,
+body .swal2-container .swal2-actions .swal2-deny,
+body .swal2-container .swal2-popup button.swal2-styled {
+  font-family: var(--font-sans) !important;
+  font-size: 60px !important;
+  font-weight: 700 !important;
+  border-radius: 1.25rem !important;
+  padding: 0.85rem 2.75rem !important;
+  min-height: 85px !important;
+  line-height: 1.2 !important;
+  box-shadow: 0 6px 18px -2px rgba(0, 0, 0, 0.2) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  letter-spacing: -0.02em !important;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  cursor: pointer !important;
+}
+
+body .swal2-container .swal2-actions button:hover,
+body .swal2-container .swal2-actions .swal2-confirm:hover,
+body .swal2-container .swal2-actions .swal2-cancel:hover,
+body .swal2-container .swal2-actions .swal2-deny:hover {
+  transform: translateY(-4px) scale(1.03) !important;
+  box-shadow: 0 14px 28px -4px rgba(0, 0, 0, 0.3) !important;
+}
+
+body .swal2-container .swal2-actions button:active,
+body .swal2-container .swal2-actions .swal2-confirm:active,
+body .swal2-container .swal2-actions .swal2-cancel:active {
+  transform: translateY(1px) scale(0.97) !important;
+}
+
+/* Toast Pop Up Animation */
+body .swal2-container.swal2-top-end .swal2-popup.swal2-toast,
+body .swal2-container.swal2-top-right .swal2-popup.swal2-toast,
+body .swal2-container .swal2-popup.swal2-toast,
+body .swal2-animated-toast {
+  animation: swal2-toast-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+  padding: 1rem 1.25rem !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+/* Ringing Bell Shaking / Vibration Animation (ສຽງກະລິ່ງສັ່ນດັ່ງ) */
+@keyframes bell-shake {
+  0%, 100% { transform: rotate(0); }
+  10% { transform: rotate(18deg) scale(1.1); }
+  20% { transform: rotate(-18deg) scale(1.1); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-14deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(-10deg); }
+  70% { transform: rotate(5deg); }
+  80% { transform: rotate(-5deg); }
+  90% { transform: rotate(0); }
+}
+
+.animate-bell-shake {
+  animation: bell-shake 1.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+  transform-origin: top center;
+  display: inline-block;
+}

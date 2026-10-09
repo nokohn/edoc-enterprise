@@ -1,0 +1,25 @@
+{
+  "name": "edoc-lao-enterprise",
+  "version": "1.0.0",
+  "description": "E-Document Management - ລະບົບຄຸ້ມຄອງເອກະສານ ແລະ ການໄຫຼວຽນວຽກງານອິເລັກໂຕຣນິກ (Electronic Document & Workflow Management System)",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=server\" \"npm run dev --workspace=client\"",
+    "dev:server": "npm run dev --workspace=server",
+    "dev:client": "npm run dev --workspace=client",
+    "build": "npm run build --workspace=server && npm run build --workspace=client",
+    "start": "npm run start --workspace=server",
+    "db:push": "npm run db:push --workspace=server",
+    "db:seed": "npm run db:seed --workspace=server",
+    "db:studio": "npm run db:studio --workspace=server",
+    "tunnel": "powershell -ExecutionPolicy Bypass -File ./tools/cloudflare-tunnel.ps1",
+    "deploy:pages": "npm run build --workspace=client && npx wrangler pages deploy client/dist --project-name edoc-lao"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

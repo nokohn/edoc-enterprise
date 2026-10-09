@@ -1,0 +1,472 @@
+// Prisma Schema for e-OFFICE (ລະບົບຫ້ອງການອິເລັກໂຕຣນິກ)
+// Supports SQLite for zero-config local development and PostgreSQL for production
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  username      String    @unique
+  passwordHash  String
+  email         String?   @unique
+  phone         String?
+  roleId        String
+  departmentId  String?
+  positionId    String?
+  employeeId    String?   @unique
+  isActive      Boolean   @default(true)
+  avatarUrl     String?
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  role          Role      @relation(fields: [roleId], references: [id])
+  department    Department? @relation("DeptUsers", fields: [departmentId], references: [id])
+  position      Position?   @relation(fields: [positionId], references: [id])
+  employee      Employee?   @relation(fields: [employeeId], references: [id])
+
+  assignedTasks     Task[]           @relation("TaskAssignedTo")
+  createdTasks      Task[]           @relation("TaskAssignedBy")
+  docComments       DocumentComment[]
+  taskComments      TaskComment[]
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+  createdEvents     CalendarEvent[]
+  taskAssignmentsFrom TaskAssignment[] @relation("AssignFrom")
+  taskAssignmentsTo   TaskAssignment[] @relation("AssignTo")
+
+  managedDepartments   Department[] @relation("DeptHead")
+  deputyDepartments    Department[] @relation("DeptDeputy")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  nameLao     String
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+  employees   Employee[]
+  rolePermissions RolePermission[]
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  nameLao     String
+  module      String
+  createdAt   DateTime @default(now())
+
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model Department {
+  id           String    @id @default(cuid())
+  code         String    @unique
+  name         String
+  nameLao      String
+  description  String?
+  headId       String?
+  deputyHeadId String?
+  parentId     String?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  head         User?       @relation("DeptHead", fields: [headId], references: [id])
+  deputyHead   User?       @relation("DeptDeputy", fields: [deputyHeadId], references: [id])
+  parent       Department? @relation("DeptHierarchy", fields: [parentId], references: [id])
+  subDepts     Department[] @relation("DeptHierarchy")
+
+  users        User[]      @relation("DeptUsers")
+  employees    Employee[]
+  documents    Document[]
+  incomingDocs IncomingDocument[]
+  outgoingDocs OutgoingDocument[]
+  tasks        Task[]
+  events       CalendarEvent[]
+}
+
+model Position {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  nameLao     String
+  level       Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+  employees   Employee[]
+}
+
+model Employee {
+  id           String    @id @default(cuid())
+  employeeCode String    @unique
+  firstName    String
+  lastName     String
+  fullNameLao  String
+  fullNameEn   String?
+  gender       String?   // 'MALE', 'FEMALE', 'OTHER'
+  phone        String?
+  email        String?
+  departmentId String?
+  positionId   String?
+  roleId       String?
+  avatarUrl    String?
+  status       String    @default("ACTIVE") // 'ACTIVE', 'INACTIVE', 'ON_LEAVE'
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  department   Department? @relation(fields: [departmentId], references: [id])
+  position     Position?   @relation(fields: [positionId], references: [id])
+  role         Role?       @relation(fields: [roleId], references: [id])
+  user         User?
+}
+
+model DocumentType {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  nameLao     String
+  prefix      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  documents        Document[]
+  incomingDocs     IncomingDocument[]
+  outgoingDocs     OutgoingDocument[]
+}
+
+model Document {
+  id              String    @id @default(cuid())
+  documentNumber  String    @unique
+  title           String
+  typeId          String
+  departmentId    String
+  creatorId       String?
+  responsibleId   String?
+  priority        String    @default("NORMAL") // 'LOW', 'NORMAL', 'HIGH', 'URGENT', 'URGENTEST'
+  confidentiality String    @default("NORMAL") // 'NORMAL', 'CONFIDENTIAL', 'SECRET', 'TOP_SECRET'
+  status          String    @default("NEW")    // 'NEW', 'REGISTERED', 'REVIEWING', 'ASSIGNED', 'IN_PROGRESS', 'APPROVED', 'SENT', 'COMPLETED', 'ARCHIVED'
+  flowType        String    @default("INCOMING") // 'INCOMING', 'OUTGOING', 'INTERNAL'
+  description     String?
+  metadataJson    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  documentType    DocumentType @relation(fields: [typeId], references: [id])
+  department      Department   @relation(fields: [departmentId], references: [id])
+
+  incomingDetails IncomingDocument?
+  outgoingDetails OutgoingDocument?
+
+  attachments     DocumentAttachment[]
+  comments        DocumentComment[]
+  history         DocumentHistory[]
+  tasks           Task[]
+  workflowHistory WorkflowHistory[]
+  events          CalendarEvent[]
+}
+
+model IncomingDocument {
+  id                String    @id @default(cuid())
+  documentId        String    @unique
+  incomingNumber    String    @unique
+  originalDocNumber String?
+  docDate           DateTime?
+  receivedDate      DateTime  @default(now())
+  receivedTime      String?
+  senderOrg         String
+  senderName        String?
+  subject           String
+  typeId            String
+  priority          String    @default("NORMAL")
+  confidentialLevel String    @default("NORMAL")
+  departmentId      String
+  responsibleId     String?
+  description       String?
+  status            String    @default("NEW")
+  dueDate           DateTime?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  document          Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentType      DocumentType @relation(fields: [typeId], references: [id])
+  department        Department   @relation(fields: [departmentId], references: [id])
+}
+
+model OutgoingDocument {
+  id                String    @id @default(cuid())
+  documentId        String    @unique
+  outgoingNumber    String    @unique
+  docNumber         String?
+  docDate           DateTime  @default(now())
+  recipientOrg      String
+  recipientName     String?
+  subject           String
+  typeId            String
+  priority          String    @default("NORMAL")
+  departmentId      String
+  responsibleId     String?
+  description       String?
+  approvalStatus    String    @default("DRAFT") // 'DRAFT', 'REVIEW', 'DEPT_APPROVAL', 'MANAGEMENT_APPROVAL', 'DIRECTOR_APPROVAL', 'APPROVED', 'REJECTED', 'SENT', 'ARCHIVED'
+  sendingDate       DateTime?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  document          Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentType      DocumentType @relation(fields: [typeId], references: [id])
+  department        Department   @relation(fields: [departmentId], references: [id])
+}
+
+model DocumentAttachment {
+  id           String   @id @default(cuid())
+  documentId   String
+  fileName     String
+  originalName String
+  fileSize     Int
+  fileType     String
+  fileUrl      String
+  uploadedById String?
+  createdAt    DateTime @default(now())
+
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model DocumentComment {
+  id         String   @id @default(cuid())
+  documentId String
+  userId     String
+  content    String
+  isInternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model DocumentHistory {
+  id           String   @id @default(cuid())
+  documentId   String
+  userId       String?
+  userName     String?
+  action       String
+  statusBefore String?
+  statusAfter  String?
+  comment      String?
+  createdAt    DateTime @default(now())
+
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id             String    @id @default(cuid())
+  taskCode       String    @unique
+  title          String
+  documentId     String?
+  assignedById   String
+  assignedToId   String
+  departmentId   String
+  priority       String    @default("NORMAL") // 'LOW', 'NORMAL', 'HIGH', 'URGENT'
+  startDate      DateTime  @default(now())
+  dueDate        DateTime?
+  completionDate DateTime?
+  description    String?
+  status         String    @default("NEW") // 'NEW', 'ASSIGNED', 'ACCEPTED', 'IN_PROGRESS', 'WAITING', 'SUBMITTED', 'REVIEWING', 'APPROVED', 'COMPLETED', 'REJECTED', 'CANCELLED', 'OVERDUE'
+  progress       Int       @default(0) // 0 to 100
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  document       Document?    @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  assignedBy     User         @relation("TaskAssignedBy", fields: [assignedById], references: [id])
+  assignedTo     User         @relation("TaskAssignedTo", fields: [assignedToId], references: [id])
+  department     Department   @relation(fields: [departmentId], references: [id])
+
+  assignments    TaskAssignment[]
+  comments       TaskComment[]
+  attachments    TaskAttachment[]
+  history        TaskHistory[]
+  workflowHistory WorkflowHistory[]
+  events         CalendarEvent[]
+}
+
+model TaskAssignment {
+  id          String    @id @default(cuid())
+  taskId      String
+  fromUserId  String
+  toUserId    String
+  stepOrder   Int       @default(1)
+  status      String    @default("PENDING") // 'PENDING', 'ACCEPTED', 'REJECTED', 'COMPLETED'
+  comment     String?
+  assignedAt  DateTime  @default(now())
+  completedAt DateTime?
+
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  fromUser    User      @relation("AssignFrom", fields: [fromUserId], references: [id])
+  toUser      User      @relation("AssignTo", fields: [toUserId], references: [id])
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model TaskAttachment {
+  id           String   @id @default(cuid())
+  taskId       String
+  fileName     String
+  originalName String
+  fileSize     Int
+  fileType     String
+  fileUrl      String
+  uploadedById String?
+  createdAt    DateTime @default(now())
+
+  task         Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model TaskHistory {
+  id             String   @id @default(cuid())
+  taskId         String
+  userId         String?
+  userName       String?
+  action         String
+  statusBefore   String?
+  statusAfter    String?
+  progressBefore Int?
+  progressAfter  Int?
+  comment        String?
+  createdAt      DateTime @default(now())
+
+  task           Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model WorkflowStep {
+  id             String   @id @default(cuid())
+  workflowType   String   // 'INCOMING_DOC', 'OUTGOING_DOC', 'TASK', 'APPROVAL'
+  title          String
+  stepOrder      Int
+  approverRoleId String?
+  approverUserId String?
+  departmentId   String?
+  isMandatory    Boolean  @default(true)
+  createdAt      DateTime @default(now())
+}
+
+model WorkflowHistory {
+  id              String   @id @default(cuid())
+  documentId      String?
+  taskId          String?
+  stepOrder       Int      @default(1)
+  action          String
+  actorId         String?
+  actorName       String
+  actorPosition   String?
+  actorDepartment String?
+  comment         String?
+  decision        String?  // 'APPROVE', 'REJECT', 'RETURN', 'FORWARD', 'COMPLETE'
+  createdAt       DateTime @default(now())
+
+  document        Document? @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  task            Task?     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("INFO") // 'INFO', 'SUCCESS', 'WARNING', 'URGENT', 'APPROVAL'
+  linkUrl   String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CalendarEvent {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  eventType    String    @default("EVENT") // 'MEETING', 'TASK_DUE', 'DOC_DEADLINE', 'APPROVAL', 'HOLIDAY', 'EVENT'
+  startDate    DateTime
+  endDate      DateTime
+  allDay       Boolean   @default(false)
+  location     String?
+  color        String?   @default("#2563eb")
+  documentId   String?
+  taskId       String?
+  departmentId String?
+  createdById  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  document     Document?   @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  task         Task?       @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  createdBy    User?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  userName    String?
+  action      String   // 'LOGIN', 'LOGOUT', 'CREATE', 'UPDATE', 'DELETE', 'ASSIGN', 'APPROVE', 'REJECT', 'DOWNLOAD'
+  module      String   // 'AUTH', 'DOCUMENT', 'TASK', 'USER', 'DEPARTMENT', 'WORKFLOW', 'REPORT', 'SYSTEM'
+  recordId    String?
+  ipAddress   String?
+  userAgent   String?
+  description String
+  detailsJson String?
+  createdAt   DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  category    String   @default("GENERAL")
+  updatedAt   DateTime @updatedAt
+}
