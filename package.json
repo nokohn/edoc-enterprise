@@ -17,7 +17,7 @@
     "db:seed": "npm run db:seed --workspace=server",
     "db:studio": "npm run db:studio --workspace=server",
     "tunnel": "powershell -ExecutionPolicy Bypass -File ./tools/cloudflare-tunnel.ps1",
-    "deploy:pages": "npm run build --workspace=client && npx wrangler pages deploy client/dist --project-name edoc-lao-enterprise"
+    "deploy:pages": "npm run build --workspace=client && npx wrangler pages deploy dist --project-name edoc-lao-enterprise --cwd client"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
