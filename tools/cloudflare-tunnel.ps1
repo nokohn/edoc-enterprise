@@ -16,6 +16,6 @@ if (-not (Test-Path $toolPath)) {
     exit 1
 }
 
-# Run Quick Tunnel (Accessible from any mobile, tablet, laptop, PC worldwide)
-Write-Host "🌐 ກຳລັງເຊື່ອມຕໍ່ຫາ Cloudflare Global Edge Network..." -ForegroundColor Cyan
-& $toolPath tunnel --url "http://localhost:$port"
+Write-Host "🌐 ກຳລັງເຊື່ອມຕໍ່ຫາ Cloudflare Global Edge Network (HTTP/2 Mode)..." -ForegroundColor Cyan
+& $toolPath tunnel --protocol http2 --url "http://localhost:$port"
+
