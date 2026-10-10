@@ -3,8 +3,8 @@ services:
     name: edoc-lao-enterprise
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run db:generate --workspace=server && npm run build
-    startCommand: npm start
+    buildCommand: npm install --include=dev && npx prisma generate --schema=server/prisma/schema.prisma && npm run build
+    startCommand: node server/dist/server.js
     envVars:
       - key: NODE_ENV
         value: production
