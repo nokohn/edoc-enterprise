@@ -4,14 +4,14 @@ services:
     runtime: node
     plan: free
     buildCommand: npm install --include=dev && npx prisma generate --schema=server/prisma/schema.prisma && npm run build
-    startCommand: node server/dist/server.js
+    startCommand: npx prisma db push --schema=server/prisma/schema.prisma --accept-data-loss && node server/dist/server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
       - key: DATABASE_URL
-        value: file:./dev.db
+        value: file:./server/prisma/dev.db
       - key: JWT_SECRET
         generateValue: true
       - key: UPLOAD_DIR

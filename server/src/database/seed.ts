@@ -4,6 +4,18 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log('🌱 Checking e-OFFICE database state...');
+
+  try {
+    const existingUserCount = await prisma.user.count();
+    if (existingUserCount > 0 && process.env.FORCE_SEED !== 'true') {
+      console.log(`✅ Database already seeded with ${existingUserCount} users. Skipping destructive re-seed.`);
+      return;
+    }
+  } catch (e) {
+    console.log('Database tables not ready or empty, proceeding to seed...');
+  }
+
   console.log('🌱 Starting e-OFFICE database seeding...');
 
   // Clean existing data in reverse order of foreign keys

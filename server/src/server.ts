@@ -11,9 +11,26 @@ if (fs.existsSync(path.resolve(process.cwd(), '.env'))) {
   dotenv.config();
 }
 
+// Smart SQLite database path resolution across local and cloud environments
+const possibleDbPaths = [
+  path.resolve(process.cwd(), 'server/prisma/dev.db'),
+  path.resolve(process.cwd(), 'prisma/dev.db'),
+  path.resolve(process.cwd(), 'dev.db'),
+];
+const foundDb = possibleDbPaths.find((p) => fs.existsSync(p));
+
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = 'file:./dev.db';
+  process.env.DATABASE_URL = foundDb ? `file:${foundDb}` : 'file:./server/prisma/dev.db';
+} else if (process.env.DATABASE_URL === 'file:./dev.db' && foundDb && !fs.existsSync(path.resolve(process.cwd(), 'dev.db'))) {
+  process.env.DATABASE_URL = `file:${foundDb}`;
 }
+
+// Ensure uploads storage directory exists
+const uploadsDir = path.resolve(process.cwd(), process.env.UPLOAD_DIR || './uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 if (!process.env.JWT_SECRET) {
   process.env.JWT_SECRET = 'edoc_super_secret_jwt_key_lao_pdr_2026_secure';
 }
