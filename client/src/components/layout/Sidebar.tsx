@@ -139,6 +139,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
             );
           })}
         </nav>
+
+        {/* System Version Badge */}
+        <div className="p-3 border-t border-white/10 bg-black/20 shrink-0">
+          {!isCollapsed ? (
+            <div className="flex items-center justify-between px-1 text-[11px] text-sky-200">
+              <span className="font-medium">ເວີຊັນລະບົບ:</span>
+              <span className="font-bold font-mono px-2 py-0.5 rounded-full bg-blue-500/30 text-white border border-blue-400/40 shadow-xs">
+                v11.10.2026
+              </span>
+            </div>
+          ) : (
+            <div className="text-center" title="ເວີຊັນ v11.10.2026">
+              <span className="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded bg-blue-500/30 text-white border border-blue-400/30 inline-block">
+                v11.10
+              </span>
+            </div>
+          )}
+        </div>
       </aside>
     </>
   );

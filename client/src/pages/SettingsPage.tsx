@@ -9,6 +9,7 @@ import {
   Save,
   Database,
   Bell,
+  Info,
 } from 'lucide-react';
 import { api } from '../api/client';
 import { useTranslation } from '../i18n/LanguageContext';
@@ -172,6 +173,37 @@ export const SettingsPage: React.FC = () => {
                 onChange={(e) => handleChange('MAX_UPLOAD_SIZE_MB', e.target.value)}
               />
               <p className="text-[11px] text-slate-400 mt-1">ຂະໜາດໄຟລ໌ຄັດຕິດສູງສຸດ (PDF, Word, Excel, ຮູບພາບ)</p>
+            </div>
+          </div>
+        </Card>
+
+        {/* System Information Card */}
+        <Card
+          title={
+            <div className="flex items-center gap-2">
+              <Info className="w-5 h-5 text-blue-600" />
+              <span>ຂໍ້ມູນລະບົບ & ເວີຊັນ (System Version Info)</span>
+            </div>
+          }
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-blue-50 to-sky-50/70 border border-blue-200/90 shadow-2xs">
+              <p className="text-slate-500 font-medium">ເວີຊັນລ່າສຸດ (Version)</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-lg font-black font-mono text-blue-700">v11.10.2026</span>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-600 text-white shadow-2xs">LATEST</span>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1 font-medium">ອັບເດດວັນທີ 11 ຕຸລາ 2026</p>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/70 border border-emerald-200/90 shadow-2xs">
+              <p className="text-slate-500 font-medium">ສະຖານະລະບົບ (Status)</p>
+              <p className="text-base font-bold text-emerald-700 mt-1">🟢 Online 24/7 ພ້ອມໃຊ້ງານ</p>
+              <p className="text-[11px] text-emerald-600/80 mt-1 font-medium">Cloud Edge Network & SSL Active</p>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-50 to-purple-50/70 border border-indigo-200/90 shadow-2xs">
+              <p className="text-slate-500 font-medium">ສະຖາປັດຕະຍະກຳ (Architecture)</p>
+              <p className="text-base font-bold text-indigo-900 mt-1">Full-Stack Enterprise</p>
+              <p className="text-[11px] text-indigo-600/80 mt-1 font-medium">React 18 + Node Express + SQLite</p>
             </div>
           </div>
         </Card>
