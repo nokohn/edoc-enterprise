@@ -66,10 +66,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <aside
         className={`fixed top-0 bottom-0 left-0 z-40 flex flex-col bg-gradient-to-b from-[#12396e] via-[#1a4a8c] to-[#0d264c] text-blue-100 transition-all duration-300 ease-in-out border-r border-blue-700/50 shadow-xl shadow-blue-950/20 ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        } ${isCollapsed ? 'lg:w-20' : 'w-64'}`}
+        } ${isCollapsed ? 'lg:w-20' : 'w-64 max-w-[85vw]'}`}
       >
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-white/10 bg-black/15 shrink-0">
+        <div className="h-14 sm:h-16 flex items-center justify-between px-3.5 sm:px-4 border-b border-white/10 bg-black/15 shrink-0">
           <div className="flex items-center gap-3 overflow-hidden">
             <img
               src="/logo.png"

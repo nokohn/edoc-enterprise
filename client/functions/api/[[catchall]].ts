@@ -1,7 +1,7 @@
 export const onRequest: PagesFunction<{ BACKEND_URL?: string }> = async (context) => {
   const url = new URL(context.request.url);
   // Default to active tunnel URL or environment variable
-  const backendBase = context.env.BACKEND_URL || 'https://ticket-inline-institutional-msgstr.trycloudflare.com';
+  const backendBase = context.env.BACKEND_URL || 'https://gossip-substances-locally-promoting.trycloudflare.com';
   const targetUrl = new URL(url.pathname + url.search, backendBase);
 
   // Forward the original request with all headers and body

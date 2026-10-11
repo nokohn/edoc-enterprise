@@ -869,12 +869,12 @@ export const DocumentTrackingSheet: React.FC<DocumentTrackingSheetProps> = ({
                   </div>
                 </div>
 
-                {/* 2. ທິດຊີ້ນຳຂອງຮອງຫົວໜ້າພະແນກຜູ້ຊີ້ນຳ */}
+                {/* 2. ທິດຊີ້ນຳຂອງຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ */}
                 <div className="p-3 min-h-[130px] flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <p className="font-bold text-slate-900">
-                        ທິດຊີ້ນຳຂອງຮອງຫົວໜ້າພະແນກຜູ້ຊີ້ນຳ:
+                        ທິດຊີ້ນຳຂອງຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ:
                       </p>
                       {isEditable && (
                         <div className="no-print flex items-center gap-1.5">
@@ -883,8 +883,8 @@ export const DocumentTrackingSheet: React.FC<DocumentTrackingSheetProps> = ({
                             onClick={() =>
                               handleOpenSignature(
                                 'signImageDeputyDept',
-                                'ເຊັນລາຍເຊັນ: ຮອງຫົວໜ້າພະແນກ',
-                                'ຮອງຫົວໜ້າພະແນກ'
+                                'ເຊັນລາຍເຊັນ: ຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ',
+                                'ຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ'
                               )
                             }
                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100"
@@ -901,7 +901,7 @@ export const DocumentTrackingSheet: React.FC<DocumentTrackingSheetProps> = ({
                         rows={2}
                         value={formData.commentDeputyDept}
                         onChange={handleChange}
-                        placeholder="ພິມທິດຊີ້ນຳຂອງຮອງຫົວໜ້າພະແນກ..."
+                        placeholder="ພິມທິດຊີ້ນຳຂອງຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ..."
                         className="w-full text-xs text-slate-800 bg-transparent border border-dashed border-slate-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
                       />
                     ) : (
@@ -1463,12 +1463,12 @@ export const DocumentTrackingSheet: React.FC<DocumentTrackingSheetProps> = ({
                 </div>
 
                 {/* ---------------------------------------------------- */}
-                {/* 2. ຄຳເຫັນຂອງຮອງຫົວໜ້າພະແນກຜູ້ຊີ້ນຳ */}
+                {/* 2. ຄຳເຫັນຂອງຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ */}
                 {/* ---------------------------------------------------- */}
                 <div className="p-2.5 flex flex-col justify-between">
                   <div className="space-y-1.5">
                     <p className="font-bold text-[11px] sm:text-xs text-slate-900 leading-tight border-b border-slate-300 pb-1">
-                      ຄຳເຫັນຂອງຮອງຫົວໜ້າພະແນກຜູ້ຊີ້ນຳ:
+                      ຄຳເຫັນຂອງຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ:
                     </p>
                     {isEditable ? (
                       <textarea
@@ -1526,8 +1526,8 @@ export const DocumentTrackingSheet: React.FC<DocumentTrackingSheetProps> = ({
                               onClick={() =>
                                 handleOpenSignature(
                                   'signImageDeputyDept',
-                                  'ເຊັນລາຍເຊັນ: ຮອງຫົວໜ້າພະແນກ',
-                                  'ຮອງຫົວໜ້າພະແນກ'
+                                  'ເຊັນລາຍເຊັນ: ຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ',
+                                  'ຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ'
                                 )
                               }
                               className="text-[9px] text-blue-600 hover:underline flex items-center gap-0.5 font-bold"
@@ -1737,12 +1737,12 @@ export const DocumentTrackingSheet: React.FC<DocumentTrackingSheetProps> = ({
                 </div>
 
                 {/* ---------------------------------------------------- */}
-                {/* 4. ຄຳເຫັນຂອງ ຮອງ ຜອ */}
+                {/* 4. ຄຳເຫັນຂອງ ຮອງ ຜອ ຜູ້ຊີ້ນຳພະແນກ */}
                 {/* ---------------------------------------------------- */}
                 <div className="p-2.5 flex flex-col justify-between">
                   <div className="space-y-1.5">
                     <p className="font-bold text-[11px] sm:text-xs text-slate-900 leading-tight border-b border-slate-300 pb-1">
-                      ຄຳເຫັນຂອງ ຮອງ ຜອ:
+                      ຄຳເຫັນຂອງ ຮອງ ຜອ ຜູ້ຊີ້ນຳພະແນກ:
                     </p>
                     {isEditable ? (
                       <textarea
@@ -1800,8 +1800,8 @@ export const DocumentTrackingSheet: React.FC<DocumentTrackingSheetProps> = ({
                               onClick={() =>
                                 handleOpenSignature(
                                   'signImageDeputyDirector',
-                                  'ເຊັນລາຍເຊັນ: ຮອງ ຜອ',
-                                  'ຮອງຜູ້ອຳນວຍການ'
+                                  'ເຊັນລາຍເຊັນ: ຮອງ ຜອ ຜູ້ຊີ້ນຳພະແນກ',
+                                  'ຮອງ ຜອ ຜູ້ຊີ້ນຳພະແນກ'
                                 )
                               }
                               className="text-[9px] text-blue-600 hover:underline flex items-center gap-0.5 font-bold"

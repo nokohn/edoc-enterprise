@@ -69,6 +69,14 @@ export interface Translations {
     charts: {
       incomingByMonth: string;
       outgoingByMonth: string;
+      incomingDocsStats?: string;
+      outgoingDocsStats?: string;
+      daily?: string;
+      weekly?: string;
+      monthly?: string;
+      yearly?: string;
+      lineChart?: string;
+      barChart?: string;
       tasksByStatus: string;
       tasksByDept: string;
       workflowStats: string;
@@ -274,6 +282,14 @@ export const translations: Record<Language, Translations> = {
       charts: {
         incomingByMonth: "ສະຖິຕິເອກະສານຂາເຂົ້າລາຍເດືອນ",
         outgoingByMonth: "ສະຖິຕິເອກະສານຂາອອກລາຍເດືອນ",
+        incomingDocsStats: "ສະຖິຕິເອກະສານຂາເຂົ້າ",
+        outgoingDocsStats: "ສະຖິຕິເອກະສານຂາອອກ",
+        daily: "ລາຍວັນ",
+        weekly: "ລາຍອາທິດ",
+        monthly: "ລາຍເດືອນ",
+        yearly: "ລາຍປີ",
+        lineChart: "ເສັ້ນສະແດງ",
+        barChart: "ແຜນພູມແທ່ງ",
         tasksByStatus: "ສະຖານະວຽກງານທັງໝົດ",
         tasksByDept: "ວຽກງານແຍກຕາມພະແນກ",
         workflowStats: "ສະຖິຕິການໄຫຼວຽນເອກະສານ",
@@ -477,6 +493,14 @@ export const translations: Record<Language, Translations> = {
       charts: {
         incomingByMonth: "Incoming Documents by Month",
         outgoingByMonth: "Outgoing Documents by Month",
+        incomingDocsStats: "Incoming Documents Statistics",
+        outgoingDocsStats: "Outgoing Documents Statistics",
+        daily: "Daily",
+        weekly: "Weekly",
+        monthly: "Monthly",
+        yearly: "Yearly",
+        lineChart: "Line Graph",
+        barChart: "Bar Chart",
         tasksByStatus: "Tasks by Status",
         tasksByDept: "Tasks by Department",
         workflowStats: "Document Workflow Statistics",

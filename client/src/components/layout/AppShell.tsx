@@ -54,7 +54,7 @@ export const AppShell: React.FC = () => {
           pageTitle={getPageTitle(location.pathname)}
         />
 
-        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3 sm:p-5 md:p-6 lg:p-7 xl:p-8 2xl:p-9 max-w-[1920px] w-full mx-auto transition-all">
           <Outlet />
         </main>
       </div>

@@ -338,6 +338,16 @@ export interface AuditLog {
   createdAt: string;
 }
 
+export interface ChartPeriodItem {
+  label: string;
+  count: number;
+  name?: string;
+  month?: string;
+  year?: string;
+  range?: string;
+  fullDate?: string;
+}
+
 export interface DashboardStats {
   counts: {
     incomingDocs: number;
@@ -349,8 +359,14 @@ export interface DashboardStats {
     pendingApprovals: number;
   };
   charts: {
-    incomingByMonth: { month: string; count: number }[];
-    outgoingByMonth: { month: string; count: number }[];
+    incomingByMonth: { month: string; count: number; label?: string }[];
+    outgoingByMonth: { month: string; count: number; label?: string }[];
+    incomingByDay?: ChartPeriodItem[];
+    outgoingByDay?: ChartPeriodItem[];
+    incomingByWeek?: ChartPeriodItem[];
+    outgoingByWeek?: ChartPeriodItem[];
+    incomingByYear?: ChartPeriodItem[];
+    outgoingByYear?: ChartPeriodItem[];
     tasksByStatus: { status: string; count: number; color: string }[];
     tasksByDept: { dept: string; count: number }[];
     workflowStats: { stage: string; count: number }[];

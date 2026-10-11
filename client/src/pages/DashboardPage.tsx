@@ -14,7 +14,10 @@ import {
   Building,
   ArrowRight,
   ExternalLink,
+  BarChart2,
+  Activity,
 } from 'lucide-react';
+import { clsx } from 'clsx';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -51,6 +54,15 @@ export const DashboardPage: React.FC = () => {
   const [openIncomingModal, setOpenIncomingModal] = useState(false);
   const [openOutgoingModal, setOpenOutgoingModal] = useState(false);
   const [openTaskModal, setOpenTaskModal] = useState(false);
+
+  // Timeframe states for charts: daily, weekly, monthly, yearly
+  type Timeframe = 'daily' | 'weekly' | 'monthly' | 'yearly';
+  type ChartType = 'area' | 'bar';
+
+  const [incomingPeriod, setIncomingPeriod] = useState<Timeframe>('monthly');
+  const [outgoingPeriod, setOutgoingPeriod] = useState<Timeframe>('monthly');
+  const [incomingChartType, setIncomingChartType] = useState<ChartType>('bar');
+  const [outgoingChartType, setOutgoingChartType] = useState<ChartType>('bar');
 
   const fetchDashboardData = async () => {
     try {
@@ -90,26 +102,123 @@ export const DashboardPage: React.FC = () => {
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
 
+  const timeframeOptions: { key: Timeframe; label: string }[] = [
+    { key: 'daily', label: t.dashboard.charts.daily || 'ລາຍວັນ' },
+    { key: 'weekly', label: t.dashboard.charts.weekly || 'ລາຍອາທິດ' },
+    { key: 'monthly', label: t.dashboard.charts.monthly || 'ລາຍເດືອນ' },
+    { key: 'yearly', label: t.dashboard.charts.yearly || 'ລາຍປີ' },
+  ];
+
+  const getIncomingChartData = () => {
+    if (!stats?.charts) return [];
+    switch (incomingPeriod) {
+      case 'daily':
+        return stats.charts.incomingByDay && stats.charts.incomingByDay.length > 0
+          ? stats.charts.incomingByDay
+          : [];
+      case 'weekly':
+        return stats.charts.incomingByWeek && stats.charts.incomingByWeek.length > 0
+          ? stats.charts.incomingByWeek
+          : [];
+      case 'yearly':
+        return stats.charts.incomingByYear && stats.charts.incomingByYear.length > 0
+          ? stats.charts.incomingByYear
+          : [];
+      case 'monthly':
+      default:
+        return (stats.charts.incomingByMonth || []).map((m) => ({
+          ...m,
+          label: m.label || m.month,
+        }));
+    }
+  };
+
+  const getOutgoingChartData = () => {
+    if (!stats?.charts) return [];
+    switch (outgoingPeriod) {
+      case 'daily':
+        return stats.charts.outgoingByDay && stats.charts.outgoingByDay.length > 0
+          ? stats.charts.outgoingByDay
+          : [];
+      case 'weekly':
+        return stats.charts.outgoingByWeek && stats.charts.outgoingByWeek.length > 0
+          ? stats.charts.outgoingByWeek
+          : [];
+      case 'yearly':
+        return stats.charts.outgoingByYear && stats.charts.outgoingByYear.length > 0
+          ? stats.charts.outgoingByYear
+          : [];
+      case 'monthly':
+      default:
+        return (stats.charts.outgoingByMonth || []).map((m) => ({
+          ...m,
+          label: m.label || m.month,
+        }));
+    }
+  };
+
+  const getTimeframeLabel = (p: Timeframe) => {
+    switch (p) {
+      case 'daily':
+        return t.dashboard.charts.daily || 'ລາຍວັນ';
+      case 'weekly':
+        return t.dashboard.charts.weekly || 'ລາຍອາທິດ';
+      case 'yearly':
+        return t.dashboard.charts.yearly || 'ລາຍປີ';
+      case 'monthly':
+      default:
+        return t.dashboard.charts.monthly || 'ລາຍເດືອນ';
+    }
+  };
+
+  const CustomChartTooltip = ({ active, payload, label, color, docTypeLabel }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      const count = payload[0].value ?? 0;
+      return (
+        <div className="bg-white/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-slate-200/90 text-xs min-w-[150px]">
+          <div className="flex items-center gap-1.5 font-semibold text-slate-800 border-b border-slate-100 pb-1.5 mb-1.5">
+            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+            <span>{data.fullDate || (data.range ? `${label} (${data.range})` : data.year ? `ປີ ${data.year}` : label)}</span>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-slate-500 font-medium">{docTypeLabel}:</span>
+            <span className="font-extrabold text-sm" style={{ color }}>
+              {count} ສະບັບ
+            </span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const incomingData = getIncomingChartData();
+  const totalIncomingInPeriod = incomingData.reduce((acc, cur) => acc + (cur.count || 0), 0);
+
+  const outgoingData = getOutgoingChartData();
+  const totalOutgoingInPeriod = outgoingData.reduce((acc, cur) => acc + (cur.count || 0), 0);
+
   const COLORS = ['#94a3b8', '#3b82f6', '#eab308', '#a855f7', '#22c55e', '#ef4444'];
 
   return (
     <div className="space-y-6">
       {/* Welcome Banner & Quick Action Buttons */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
           <div>
-            <div className="flex items-center gap-3.5 flex-wrap">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+            <div className="flex items-center gap-2.5 sm:gap-3.5 flex-wrap">
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white">
                 {t.dashboard.title}
               </h1>
-              <div className="flex items-center gap-2.5 px-3 py-1 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md shadow-xs">
-                <span className="relative flex h-3 w-3">
+              <div className="flex items-center gap-2 px-2.5 py-1 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md shadow-xs">
+                <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 sm:h-3 sm:w-3 bg-emerald-400"></span>
                 </span>
-                <span className="text-xl sm:text-2xl md:text-3xl font-black font-mono tracking-tight text-white">
+                <span className="text-sm sm:text-xl md:text-2xl lg:text-3xl font-black font-mono tracking-tight text-white">
                   {formatLiveDateTime(currentDateTime)}
                 </span>
               </div>
@@ -159,7 +268,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Top 7 KPI Cards (Section 8) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 gap-2.5 sm:gap-3.5 lg:gap-4">
         {/* KPI 1: Incoming Docs */}
         <div
           onClick={() => navigate('/incoming-docs')}
@@ -303,70 +412,248 @@ export const DashboardPage: React.FC = () => {
 
       {/* Analytics Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Chart 1: Incoming Documents by Month */}
-        <Card title={t.dashboard.charts.incomingByMonth}>
+        {/* Chart 1: Incoming Documents with Period Filter (Daily, Weekly, Monthly, Yearly) - Bar Chart Default */}
+        <Card
+          className="border-blue-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          headerClassName="bg-gradient-to-r from-blue-100/80 via-sky-50 to-blue-100/80 border-b border-blue-200/90"
+          title={
+            <div className="flex items-center gap-2.5">
+              <span className="p-2 bg-blue-600 text-white rounded-xl shadow-xs shadow-blue-500/30">
+                {incomingChartType === 'bar' ? <BarChart2 className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
+              </span>
+              <div>
+                <h3 className="text-base font-bold text-blue-950">
+                  {t.dashboard.charts.incomingDocsStats || 'ສະຖິຕິເອກະສານຂາເຂົ້າ'}
+                </h3>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100/90 text-blue-800 border border-blue-200/90 shadow-2xs">
+                    {`ສະແດງຕາມ ${getTimeframeLabel(incomingPeriod)} • ລວມ ${totalIncomingInPeriod} ສະບັບ`}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+          action={
+            <div className="flex items-center gap-2">
+              {/* Colored Timeframe Tabs Strip (ແຖບເລືອກຊ່ວງເວລາ: ລາຍວັນ, ລາຍອາທິດ, ລາຍເດືອນ, ລາຍປີ) */}
+              <div className="inline-flex items-center p-1 bg-gradient-to-r from-blue-100 via-sky-100 to-blue-100 rounded-xl border border-blue-200/90 shadow-2xs gap-1">
+                {timeframeOptions.map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => setIncomingPeriod(opt.key)}
+                    className={clsx(
+                      'px-2.5 py-1 text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer',
+                      incomingPeriod === opt.key
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black shadow-sm shadow-blue-500/30 border border-blue-500 scale-[1.02]'
+                        : 'bg-white/95 text-blue-950 font-bold border border-blue-200/80 hover:bg-white hover:text-blue-700 hover:border-blue-300 shadow-2xs'
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIncomingChartType((prev) => (prev === 'bar' ? 'area' : 'bar'))}
+                title={incomingChartType === 'bar' ? (t.dashboard.charts.lineChart || 'ປ່ຽນເປັນເສັ້ນສະແດງ (Line/Area)') : (t.dashboard.charts.barChart || 'ປ່ຽນເປັນແຜນພູມແທ່ງ (Bar Chart)')}
+                className="p-1.5 rounded-xl border border-blue-200/90 bg-white hover:bg-blue-50 text-blue-700 hover:text-blue-900 shadow-2xs transition-colors cursor-pointer"
+              >
+                {incomingChartType === 'bar' ? <Activity className="w-4 h-4" /> : <BarChart2 className="w-4 h-4" />}
+              </button>
+            </div>
+          }
+        >
           <div className="h-72 w-full pt-2">
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
-            ) : (
+            ) : incomingChartType === 'bar' ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats?.charts.incomingByMonth || []}>
+                <BarChart data={incomingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="barIncomingGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="#1d4ed8" />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#ffffff',
-                      borderRadius: '12px',
-                      border: '1px solid #e2e8f0',
-                      fontSize: '12px',
-                    }}
-                  />
+                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <Tooltip content={<CustomChartTooltip color="#2563eb" docTypeLabel="ເອກະສານຂາເຂົ້າ" />} />
                   <Bar
                     dataKey="count"
-                    fill="#2563eb"
-                    radius={[6, 6, 0, 0]}
+                    fill="url(#barIncomingGrad)"
+                    maxBarSize={48}
+                    radius={[8, 8, 2, 2]}
                     name="ເອກະສານຂາເຂົ້າ"
+                    isAnimationActive={true}
+                    animationDuration={600}
                   />
                 </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={incomingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorIncoming" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <Tooltip content={<CustomChartTooltip color="#2563eb" docTypeLabel="ເອກະສານຂາເຂົ້າ" />} />
+                  <Area
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#2563eb"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorIncoming)"
+                    dot={{ r: 3.5, fill: '#2563eb', strokeWidth: 1.5, stroke: '#ffffff' }}
+                    activeDot={{ r: 6, fill: '#2563eb', stroke: '#ffffff', strokeWidth: 2 }}
+                    name="ເອກະສານຂາເຂົ້າ"
+                    isAnimationActive={true}
+                    animationDuration={600}
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             )}
           </div>
         </Card>
 
-        {/* Chart 2: Outgoing Documents by Month */}
-        <Card title={t.dashboard.charts.outgoingByMonth}>
+        {/* Chart 2: Outgoing Documents with Period Filter (Daily, Weekly, Monthly, Yearly) - Bar Chart Default */}
+        <Card
+          className="border-indigo-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          headerClassName="bg-gradient-to-r from-indigo-100/80 via-purple-50 to-indigo-100/80 border-b border-indigo-200/90"
+          title={
+            <div className="flex items-center gap-2.5">
+              <span className="p-2 bg-indigo-600 text-white rounded-xl shadow-xs shadow-indigo-500/30">
+                {outgoingChartType === 'bar' ? <BarChart2 className="w-4 h-4" /> : <Send className="w-4 h-4" />}
+              </span>
+              <div>
+                <h3 className="text-base font-bold text-indigo-950">
+                  {t.dashboard.charts.outgoingDocsStats || 'ສະຖິຕິເອກະສານຂາອອກ'}
+                </h3>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-100/90 text-indigo-800 border border-indigo-200/90 shadow-2xs">
+                    {`ສະແດງຕາມ ${getTimeframeLabel(outgoingPeriod)} • ລວມ ${totalOutgoingInPeriod} ສະບັບ`}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+          action={
+            <div className="flex items-center gap-2">
+              {/* Colored Timeframe Tabs Strip (ແຖບເລືອກຊ່ວງເວລາ: ລາຍວັນ, ລາຍອາທິດ, ລາຍເດືອນ, ລາຍປີ) */}
+              <div className="inline-flex items-center p-1 bg-gradient-to-r from-indigo-100 via-purple-100 to-indigo-100 rounded-xl border border-indigo-200/90 shadow-2xs gap-1">
+                {timeframeOptions.map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => setOutgoingPeriod(opt.key)}
+                    className={clsx(
+                      'px-2.5 py-1 text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer',
+                      outgoingPeriod === opt.key
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black shadow-sm shadow-indigo-500/30 border border-indigo-500 scale-[1.02]'
+                        : 'bg-white/95 text-indigo-950 font-bold border border-indigo-200/80 hover:bg-white hover:text-indigo-700 hover:border-indigo-300 shadow-2xs'
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setOutgoingChartType((prev) => (prev === 'bar' ? 'area' : 'bar'))}
+                title={outgoingChartType === 'bar' ? (t.dashboard.charts.lineChart || 'ປ່ຽນເປັນເສັ້ນສະແດງ (Line/Area)') : (t.dashboard.charts.barChart || 'ປ່ຽນເປັນແຜນພູມແທ່ງ (Bar Chart)')}
+                className="p-1.5 rounded-xl border border-indigo-200/90 bg-white hover:bg-indigo-50 text-indigo-700 hover:text-indigo-900 shadow-2xs transition-colors cursor-pointer"
+              >
+                {outgoingChartType === 'bar' ? <Activity className="w-4 h-4" /> : <BarChart2 className="w-4 h-4" />}
+              </button>
+            </div>
+          }
+        >
           <div className="h-72 w-full pt-2">
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
-            ) : (
+            ) : outgoingChartType === 'bar' ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats?.charts.outgoingByMonth || []}>
+                <BarChart data={outgoingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="barOutgoingGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#818cf8" />
+                      <stop offset="100%" stopColor="#4f46e5" />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#ffffff',
-                      borderRadius: '12px',
-                      border: '1px solid #e2e8f0',
-                      fontSize: '12px',
-                    }}
-                  />
+                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <Tooltip content={<CustomChartTooltip color="#6366f1" docTypeLabel="ເອກະສານຂາອອກ" />} />
                   <Bar
                     dataKey="count"
-                    fill="#6366f1"
-                    radius={[6, 6, 0, 0]}
+                    fill="url(#barOutgoingGrad)"
+                    maxBarSize={48}
+                    radius={[8, 8, 2, 2]}
                     name="ເອກະສານຂາອອກ"
+                    isAnimationActive={true}
+                    animationDuration={600}
                   />
                 </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={outgoingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorOutgoing" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#818cf8" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <Tooltip content={<CustomChartTooltip color="#6366f1" docTypeLabel="ເອກະສານຂາອອກ" />} />
+                  <Area
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#6366f1"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorOutgoing)"
+                    dot={{ r: 3.5, fill: '#6366f1', strokeWidth: 1.5, stroke: '#ffffff' }}
+                    activeDot={{ r: 6, fill: '#6366f1', stroke: '#ffffff', strokeWidth: 2 }}
+                    name="ເອກະສານຂາອອກ"
+                    isAnimationActive={true}
+                    animationDuration={600}
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             )}
           </div>
         </Card>
 
         {/* Chart 3: Tasks by Status (Donut Chart) */}
-        <Card title={t.dashboard.charts.tasksByStatus}>
+        <Card
+          className="border-amber-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          headerClassName="bg-gradient-to-r from-amber-100/80 via-orange-50 to-amber-100/80 border-b border-amber-200/90"
+          title={
+            <div className="flex items-center gap-2.5">
+              <span className="p-2 bg-amber-500 text-white rounded-xl shadow-xs shadow-amber-500/30">
+                <Activity className="w-4 h-4" />
+              </span>
+              <div>
+                <h3 className="text-base font-bold text-amber-950">
+                  {t.dashboard.charts.tasksByStatus || 'ສະຖານະວຽກງານທັງໝົດ'}
+                </h3>
+                <p className="text-xs text-amber-900/70 font-medium">
+                  ອັດຕາສ່ວນຄວາມຄືບໜ້າຂອງວຽກງານ
+                </p>
+              </div>
+            </div>
+          }
+        >
           <div className="h-72 w-full flex items-center justify-center">
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
@@ -406,7 +693,25 @@ export const DashboardPage: React.FC = () => {
         </Card>
 
         {/* Chart 4: Tasks by Department */}
-        <Card title={t.dashboard.charts.tasksByDept}>
+        <Card
+          className="border-emerald-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          headerClassName="bg-gradient-to-r from-emerald-100/80 via-teal-50 to-emerald-100/80 border-b border-emerald-200/90"
+          title={
+            <div className="flex items-center gap-2.5">
+              <span className="p-2 bg-emerald-600 text-white rounded-xl shadow-xs shadow-emerald-500/30">
+                <Building className="w-4 h-4" />
+              </span>
+              <div>
+                <h3 className="text-base font-bold text-emerald-950">
+                  {t.dashboard.charts.tasksByDept || 'ຈຳນວນວຽກງານແຕ່ລະພະແນກ'}
+                </h3>
+                <p className="text-xs text-emerald-900/70 font-medium">
+                  ການແບ່ງປັນວຽກງານຕາມພະແນກການ
+                </p>
+              </div>
+            </div>
+          }
+        >
           <div className="h-72 w-full pt-2">
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />

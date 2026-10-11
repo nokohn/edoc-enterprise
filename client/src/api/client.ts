@@ -199,8 +199,15 @@ class ApiClient {
   }
 
   // Workflow & Approval API
-  async getWorkflowSteps() {
-    return this.request<{ success: boolean; data: any[]; roles: any[] }>('/workflow/steps');
+  async getWorkflowSteps(workflowType?: string) {
+    const query = workflowType ? `?workflowType=${workflowType}` : '';
+    return this.request<{
+      success: boolean;
+      data: any[];
+      incomingSteps?: any[];
+      outgoingSteps?: any[];
+      roles: any[];
+    }>(`/workflow/steps${query}`);
   }
 
   async updateWorkflowStep(id: string, payload: any) {

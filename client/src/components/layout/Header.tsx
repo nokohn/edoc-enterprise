@@ -43,47 +43,47 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, pageTitle }) =>
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-16 bg-gradient-to-r from-slate-50/95 via-sky-50/30 to-indigo-50/20 backdrop-blur-md border-b border-slate-200/90 px-4 sm:px-6 flex items-center justify-between gap-4 shadow-2xs">
+      <header className="sticky top-0 z-30 h-14 sm:h-16 bg-gradient-to-r from-slate-50/95 via-sky-50/30 to-indigo-50/20 backdrop-blur-md border-b border-slate-200/90 px-2.5 sm:px-5 lg:px-6 flex items-center justify-between gap-2 sm:gap-4 shadow-2xs">
         {/* Left: Mobile Toggle & Page Title */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button
             onClick={onToggleSidebar}
-            className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white/80 transition-colors focus:outline-none border border-transparent hover:border-slate-200"
+            className="p-1.5 sm:p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white/80 transition-colors focus:outline-none border border-transparent hover:border-slate-200"
             title="Toggle Sidebar"
           >
             <Menu className="w-5 h-5" />
           </button>
 
           {pageTitle && (
-            <h1 className="text-sm sm:text-base font-bold text-slate-800 tracking-tight hidden sm:block">
+            <h1 className="text-xs sm:text-base font-bold text-slate-800 tracking-tight hidden md:block">
               {pageTitle}
             </h1>
           )}
         </div>
 
         {/* Center: Global Search Bar */}
-        <div className="flex-1 max-w-md mx-2">
+        <div className="flex-1 max-w-md mx-1 sm:mx-2 min-w-0">
           <button
             onClick={() => setSearchOpen(true)}
-            className="w-full flex items-center justify-between px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white/90 hover:bg-white text-slate-400 hover:text-slate-600 text-xs sm:text-sm transition-all focus:outline-none shadow-2xs hover:border-blue-300"
+            className="w-full flex items-center justify-between px-2.5 sm:px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white/90 hover:bg-white text-slate-400 hover:text-slate-600 text-xs sm:text-sm transition-all focus:outline-none shadow-2xs hover:border-blue-300"
           >
-            <span className="flex items-center gap-2">
-              <Search className="w-4 h-4 text-slate-400" />
-              <span className="truncate">{t.header.searchPlaceholder}</span>
+            <span className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 shrink-0" />
+              <span className="truncate text-[11px] sm:text-xs">{t.header.searchPlaceholder}</span>
             </span>
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-50 rounded border border-slate-200 shadow-2xs">
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-50 rounded border border-slate-200 shadow-2xs shrink-0">
               Ctrl+K
             </kbd>
           </button>
         </div>
 
         {/* Right: Language, Notifications & User Profile */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Language Switcher Tab Strip */}
-          <div className="flex items-center rounded-xl border border-slate-200 bg-slate-100/90 p-1 text-xs font-semibold shadow-2xs">
+          <div className="flex items-center rounded-xl border border-slate-200 bg-slate-100/90 p-0.5 sm:p-1 text-[11px] sm:text-xs font-semibold shadow-2xs">
             <button
               onClick={() => setLanguage('lo')}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
+              className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all ${
                 language === 'lo'
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, pageTitle }) =>
             </button>
             <button
               onClick={() => setLanguage('en')}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
+              className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition-all ${
                 language === 'en'
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'

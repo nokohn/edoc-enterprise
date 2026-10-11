@@ -10,56 +10,118 @@ import { createNotification } from '../services/notification.service.js';
 // 4. ຄຳເຫັນຂອງຫົວໜ້າພະແນກ (Department Head)
 // 5. ຄຳເຫັນຂອງ ຮອງ ຜອ (Deputy Director)
 // 6. ຄຳເຫັນຂອງ ຜອ (Director)
-const DEFAULT_LHSE_STEPS = [
+// 1. ຂັ້ນຕອນການໄຫຼວຽນເອກະສານຂາເຂົ້າ (Incoming Document Workflow Timeline - 5 Stages):
+// 1. ຮັບເອກະສານ & ລົງທະບຽນຂາເຂົ້າ (Registry Staff / Admin)
+// 2. ຄະນະອຳນວຍການ ຊີ້ນຳ & ໃສ່ຄຳເຫັນ (Director / Office Head)
+// 3. ຫົວໜ້າພະແນກ ມອບໝາຍວຽກ (Department Head)
+// 4. ພະນັກງານວິຊາການ ຄົ້ນຄວ້າ & ປະຕິບັດ (Officer / Staff)
+// 5. ສຳເລັດສົມບູນ & ຈັດເກັບສຳເນົາ (Department Head & Archivist)
+export const DEFAULT_INCOMING_STEPS = [
+  { stepOrder: 1, title: 'ຮັບເອກະສານ & ລົງທະບຽນຂາເຂົ້າ', roleName: 'Officer / Staff' },
+  { stepOrder: 2, title: 'ຄະນະອຳນວຍການ ຊີ້ນຳ & ໃສ່ຄຳເຫັນ', roleName: 'Director' },
+  { stepOrder: 3, title: 'ຫົວໜ້າພະແນກ ມອບໝາຍວຽກ', roleName: 'Department Head' },
+  { stepOrder: 4, title: 'ພະນັກງານວິຊາການ ຄົ້ນຄວ້າ & ປະຕິບັດ', roleName: 'Officer / Staff' },
+  { stepOrder: 5, title: 'ສຳເລັດສົມບູນ & ຈັດເກັບສຳເນົາ', roleName: 'Department Head' },
+];
+
+// 2. ຂັ້ນຕອນການໄຫຼວຽນເອກະສານຂາອອກ (Outgoing Document Workflow Timeline - LHSE 5-Step Routing Slip):
+// 1. ຜູ້ຄົ້ນຄວ້າ / ສ້າງຮ່າງ (Staff / Officer)
+// 2. ຄຳເຫັນຂອງຄະນະໜ່ວຍງານ (Unit Committee / Unit Head)
+// 3. ຄຳເຫັນຂອງຮອງຫົວໜ້າພະແນກຜູ້ຊີ້ນຳ (Deputy Department Head)
+// 4. ຄຳເຫັນຂອງຫົວໜ້າພະແນກ (Department Head)
+// 5. ຄະນະອຳນວຍການ ອະນຸມັດ, ເຊັນດິຈິຕອນ & ສົ່ງອອກ (Director / Deputy Director)
+export const DEFAULT_OUTGOING_STEPS = [
   { stepOrder: 1, title: 'ຜູ້ຄົ້ນຄວ້າ / ສ້າງຮ່າງ', roleName: 'Officer / Staff' },
   { stepOrder: 2, title: 'ຄຳເຫັນຂອງຄະນະໜ່ວຍງານ', roleName: 'Unit Head' },
   { stepOrder: 3, title: 'ຄຳເຫັນຂອງຮອງຫົວໜ້າພະແນກຜູ້ຊີ້ນຳ', roleName: 'Deputy Department Head' },
   { stepOrder: 4, title: 'ຄຳເຫັນຂອງຫົວໜ້າພະແນກ', roleName: 'Department Head' },
-  { stepOrder: 5, title: 'ຄຳເຫັນຂອງ ຮອງ ຜອ', roleName: 'Deputy Director' },
-  { stepOrder: 6, title: 'ຄຳເຫັນຂອງ ຜອ', roleName: 'Director' },
+  { stepOrder: 5, title: 'ຄະນະອຳນວຍການ ອະນຸມັດ, ເຊັນດິຈິຕອນ & ສົ່ງອອກ', roleName: 'Director' },
 ];
 
 export const getWorkflowSteps = async (req: Request, res: Response): Promise<void> => {
   try {
-    let steps = await prisma.workflowStep.findMany({
-      orderBy: { stepOrder: 'asc' },
-    });
+    const { workflowType } = req.query;
 
     const roles = await prisma.role.findMany({
       orderBy: { name: 'asc' },
     });
 
-    // If steps don't exist or need sync with LHSE structure
-    if (steps.length === 0) {
-      for (const s of DEFAULT_LHSE_STEPS) {
+    // Check & Seed Incoming steps
+    let incomingSteps = await prisma.workflowStep.findMany({
+      where: { workflowType: 'INCOMING_DOC' },
+      orderBy: { stepOrder: 'asc' },
+    });
+
+    if (incomingSteps.length === 0) {
+      for (const s of DEFAULT_INCOMING_STEPS) {
         const matchingRole = roles.find(r => r.name === s.roleName);
         await prisma.workflowStep.create({
           data: {
-            workflowType: 'APPROVAL',
+            workflowType: 'INCOMING_DOC',
             title: s.title,
             stepOrder: s.stepOrder,
             approverRoleId: matchingRole?.id || null,
             isMandatory: true,
-          }
+          },
         });
       }
-      steps = await prisma.workflowStep.findMany({
+      incomingSteps = await prisma.workflowStep.findMany({
+        where: { workflowType: 'INCOMING_DOC' },
         orderBy: { stepOrder: 'asc' },
       });
     }
 
-    // Attach role objects for ease of use in UI
-    const stepsWithRoles = steps.map(step => {
-      const role = roles.find(r => r.id === step.approverRoleId);
-      return {
-        ...step,
-        role: role || null,
-      };
+    // Check & Seed Outgoing steps
+    let outgoingSteps = await prisma.workflowStep.findMany({
+      where: { workflowType: { in: ['OUTGOING_DOC', 'APPROVAL'] } },
+      orderBy: { stepOrder: 'asc' },
     });
+
+    if (outgoingSteps.length === 0) {
+      for (const s of DEFAULT_OUTGOING_STEPS) {
+        const matchingRole = roles.find(r => r.name === s.roleName);
+        await prisma.workflowStep.create({
+          data: {
+            workflowType: 'OUTGOING_DOC',
+            title: s.title,
+            stepOrder: s.stepOrder,
+            approverRoleId: matchingRole?.id || null,
+            isMandatory: true,
+          },
+        });
+      }
+      outgoingSteps = await prisma.workflowStep.findMany({
+        where: { workflowType: { in: ['OUTGOING_DOC', 'APPROVAL'] } },
+        orderBy: { stepOrder: 'asc' },
+      });
+    }
+
+    const attachRoles = (stepsList: any[]) =>
+      stepsList.map(step => {
+        const role = roles.find(r => r.id === step.approverRoleId);
+        return {
+          ...step,
+          role: role || null,
+        };
+      });
+
+    const incomingWithRoles = attachRoles(incomingSteps);
+    const outgoingWithRoles = attachRoles(outgoingSteps);
+
+    let filteredData = outgoingWithRoles;
+    if (workflowType === 'INCOMING_DOC') {
+      filteredData = incomingWithRoles;
+    } else if (workflowType === 'OUTGOING_DOC') {
+      filteredData = outgoingWithRoles;
+    } else if (workflowType === 'ALL') {
+      filteredData = [...incomingWithRoles, ...outgoingWithRoles];
+    }
 
     res.json({
       success: true,
-      data: stepsWithRoles,
+      data: filteredData,
+      incomingSteps: incomingWithRoles,
+      outgoingSteps: outgoingWithRoles,
       roles,
     });
   } catch (error) {
