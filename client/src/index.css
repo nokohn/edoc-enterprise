@@ -14,20 +14,20 @@
   @media (max-width: 639px) {
     :root {
       /* Fluid automatic scaling for mobile */
-      font-size: clamp(13px, 3.75vw, 14.5px);
+      font-size: clamp(13px, 3.8vw, 14.5px);
     }
 
-    /* Auto icon sizing optimization for mobile (strictly Lucide icons, NOT charts or other SVG graphics) */
+    /* Proportional auto icon sizing for mobile */
     svg.lucide, .lucide {
-      max-width: 1.25rem;
-      max-height: 1.25rem;
+      stroke-width: 1.85px;
     }
 
     /* Fullscreen comfortable modals & dialogs on mobile */
     .modal-content, [role="dialog"] {
-      max-height: 94vh !important;
-      margin: 0.5rem !important;
+      max-height: 96vh !important;
+      margin: 0.35rem auto !important;
       border-radius: 1.25rem !important;
+      width: calc(100vw - 0.75rem) !important;
     }
 
     /* Touch target ergonomics */
@@ -40,12 +40,11 @@
   @media (min-width: 640px) and (max-width: 1023px) {
     :root {
       /* Fluid scaling between 14px and 15px */
-      font-size: clamp(14px, 1.45vw, 15px);
+      font-size: clamp(14px, 1.5vw, 15px);
     }
 
     svg.lucide, .lucide {
-      max-width: 1.35rem;
-      max-height: 1.35rem;
+      stroke-width: 1.85px;
     }
 
     /* Tablet optimal grid gaps */
@@ -475,26 +474,28 @@ body .swal2-container .swal2-actions {
   justify-content: center !important;
 }
 
-/* 60px Large Font for All SweetAlert 2 Buttons with Interactive Spring Animation */
+/* Adaptive High-Impact Buttons for All SweetAlert 2 Dialogs (Fluid across Mobile, Tablet, Desktop) */
 body .swal2-container .swal2-actions button,
 body .swal2-container .swal2-actions .swal2-confirm,
 body .swal2-container .swal2-actions .swal2-cancel,
 body .swal2-container .swal2-actions .swal2-deny,
 body .swal2-container .swal2-popup button.swal2-styled {
   font-family: var(--font-sans) !important;
-  font-size: 60px !important;
+  font-size: clamp(16px, 3.8vw, 24px) !important;
   font-weight: 700 !important;
-  border-radius: 1.25rem !important;
-  padding: 0.85rem 2.75rem !important;
-  min-height: 85px !important;
-  line-height: 1.2 !important;
-  box-shadow: 0 6px 18px -2px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 1.15rem !important;
+  padding: 0.75rem clamp(1.25rem, 3.5vw, 2.5rem) !important;
+  min-height: clamp(48px, 6vw, 62px) !important;
+  line-height: 1.25 !important;
+  box-shadow: 0 6px 18px -2px rgba(0, 0, 0, 0.18) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  letter-spacing: -0.02em !important;
+  letter-spacing: -0.01em !important;
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   cursor: pointer !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 body .swal2-container .swal2-actions button:hover,

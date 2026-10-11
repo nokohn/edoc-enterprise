@@ -62,7 +62,7 @@ export const Modal: React.FC<ModalProps> = ({
       />
 
       {/* Modal Dialog */}
-      <div className="flex min-h-full items-center justify-center p-4 text-center">
+      <div className="flex min-h-full items-center justify-center p-2 sm:p-4 text-center">
         <div
           className={twMerge(
             clsx(
@@ -75,19 +75,19 @@ export const Modal: React.FC<ModalProps> = ({
         >
           {/* Header Bar */}
           {(title || subtitle) && (
-            <div className="px-6 py-4.5 border-b border-slate-200/90 flex items-center justify-between gap-4 bg-gradient-to-r from-slate-50/95 via-sky-50/50 to-blue-50/30">
-              <div>
+            <div className="px-4 py-3 sm:px-6 sm:py-4.5 border-b border-slate-200/90 flex items-center justify-between gap-3 sm:gap-4 bg-gradient-to-r from-slate-50/95 via-sky-50/50 to-blue-50/30">
+              <div className="min-w-0 flex-1">
                 {typeof title === 'string' ? (
-                  <h3 className="text-base font-bold text-slate-900">{title}</h3>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate">{title}</h3>
                 ) : (
                   title
                 )}
-                {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+                {subtitle && <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 truncate">{subtitle}</p>}
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-lg p-1.5 text-slate-400 hover:text-slate-700 hover:bg-white/80 focus:outline-none transition-colors border border-transparent hover:border-slate-200"
+                className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:text-slate-700 hover:bg-white/80 focus:outline-none transition-colors border border-transparent hover:border-slate-200"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -95,11 +95,11 @@ export const Modal: React.FC<ModalProps> = ({
           )}
 
           {/* Body */}
-          <div className="px-6 py-5 max-h-[calc(85vh-120px)] overflow-y-auto">{children}</div>
+          <div className="px-3.5 sm:px-6 py-3.5 sm:py-5 max-h-[calc(90vh-110px)] overflow-y-auto">{children}</div>
 
           {/* Footer Bar */}
           {footer && (
-            <div className="px-6 py-4 bg-gradient-to-r from-slate-50/90 via-sky-50/25 to-slate-50/90 border-t border-slate-200/80 flex items-center justify-end gap-3">
+            <div className="px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-slate-50/90 via-sky-50/25 to-slate-50/90 border-t border-slate-200/80 flex items-center justify-end gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap">
               {footer}
             </div>
           )}
