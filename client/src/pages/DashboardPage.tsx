@@ -145,20 +145,6 @@ export const DashboardPage: React.FC = () => {
     if (isMobile) {
       switch (period) {
         case 'monthly':
-          return 14;
-        case 'daily':
-          return 20;
-        case 'weekly':
-          return 28;
-        case 'yearly':
-          return 34;
-        default:
-          return 20;
-      }
-    }
-    if (isTablet) {
-      switch (period) {
-        case 'monthly':
           return 22;
         case 'daily':
           return 28;
@@ -167,21 +153,35 @@ export const DashboardPage: React.FC = () => {
         case 'yearly':
           return 44;
         default:
-          return 30;
+          return 28;
+      }
+    }
+    if (isTablet) {
+      switch (period) {
+        case 'monthly':
+          return 28;
+        case 'daily':
+          return 36;
+        case 'weekly':
+          return 48;
+        case 'yearly':
+          return 54;
+        default:
+          return 38;
       }
     }
     // Desktop / Ultrawide
     switch (period) {
       case 'monthly':
-        return 32;
-      case 'daily':
         return 38;
+      case 'daily':
+        return 46;
       case 'weekly':
-        return 48;
+        return 56;
       case 'yearly':
-        return 52;
+        return 60;
       default:
-        return 40;
+        return 46;
     }
   };
 
@@ -550,11 +550,11 @@ export const DashboardPage: React.FC = () => {
             </div>
           }
         >
-          <div className="h-[250px] sm:h-[285px] lg:h-[320px] w-full pt-1 sm:pt-2">
+          <div className="w-full min-w-0 pt-1 sm:pt-2" style={{ height: isMobile ? 280 : 320, minHeight: isMobile ? 280 : 320 }}>
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
             ) : incomingChartType === 'bar' ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={isMobile ? 270 : 310}>
                 <BarChart
                   data={incomingData}
                   margin={{
@@ -707,11 +707,11 @@ export const DashboardPage: React.FC = () => {
             </div>
           }
         >
-          <div className="h-[250px] sm:h-[285px] lg:h-[320px] w-full pt-1 sm:pt-2">
+          <div className="w-full min-w-0 pt-1 sm:pt-2" style={{ height: isMobile ? 280 : 320, minHeight: isMobile ? 280 : 320 }}>
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
             ) : outgoingChartType === 'bar' ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={isMobile ? 270 : 310}>
                 <BarChart
                   data={outgoingData}
                   margin={{
@@ -832,11 +832,11 @@ export const DashboardPage: React.FC = () => {
             </div>
           }
         >
-          <div className="h-[250px] sm:h-[285px] lg:h-[320px] w-full flex items-center justify-center">
+          <div className="w-full min-w-0 flex items-center justify-center" style={{ height: isMobile ? 280 : 320, minHeight: isMobile ? 280 : 320 }}>
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={isMobile ? 270 : 310}>
                 <PieChart>
                   <Pie
                     data={stats?.charts.tasksByStatus || []}
@@ -890,11 +890,11 @@ export const DashboardPage: React.FC = () => {
             </div>
           }
         >
-          <div className="h-[250px] sm:h-[285px] lg:h-[320px] w-full pt-1 sm:pt-2">
+          <div className="w-full min-w-0 pt-1 sm:pt-2" style={{ height: isMobile ? 280 : 320, minHeight: isMobile ? 280 : 320 }}>
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={isMobile ? 270 : 310}>
                 <BarChart
                   data={stats?.charts.tasksByDept || []}
                   layout="vertical"

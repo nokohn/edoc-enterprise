@@ -17,8 +17,8 @@
       font-size: clamp(13px, 3.75vw, 14.5px);
     }
 
-    /* Auto icon sizing optimization for mobile */
-    svg.lucide, svg {
+    /* Auto icon sizing optimization for mobile (strictly Lucide icons, NOT charts or other SVG graphics) */
+    svg.lucide, .lucide {
       max-width: 1.25rem;
       max-height: 1.25rem;
     }
@@ -43,7 +43,7 @@
       font-size: clamp(14px, 1.45vw, 15px);
     }
 
-    svg.lucide, svg {
+    svg.lucide, .lucide {
       max-width: 1.35rem;
       max-height: 1.35rem;
     }
@@ -96,10 +96,22 @@
   }
 
   /* All SVG icons automatically maintain crisp clarity and proportion across all devices */
-  svg.lucide, svg {
+  svg.lucide, .lucide {
     display: inline-block;
     vertical-align: middle;
     flex-shrink: 0;
+  }
+
+  /* Recharts Charts MUST ALWAYS render full-width and never be restricted by icon constraints */
+  .recharts-responsive-container {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .recharts-responsive-container svg,
+  .recharts-wrapper,
+  .recharts-surface {
+    max-width: none !important;
+    max-height: none !important;
   }
 }
 
