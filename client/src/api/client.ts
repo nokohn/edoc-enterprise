@@ -49,7 +49,7 @@ class ApiClient {
       headers,
     });
 
-    if (res.status === 401) {
+    if (res.status === 401 && !endpoint.includes('/auth/login')) {
       localStorage.removeItem('edoc_token');
       localStorage.removeItem('edoc_user');
       if (window.location.pathname !== '/login') {

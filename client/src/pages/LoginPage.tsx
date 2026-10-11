@@ -193,6 +193,21 @@ export const LoginPage: React.FC = () => {
                 {isLoading ? t.login.loggingIn : t.login.loginBtn}
               </Button>
             </div>
+
+            {/* Quick Login Helper Hint */}
+            <div className="pt-2">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/90 text-center text-xs text-slate-600">
+                <p className="font-semibold text-slate-700">ບັນຊີເຂົ້າສູ່ລະບົບເລີ່ມຕົ້ນ (Default Account):</p>
+                <div className="flex items-center justify-center gap-2.5 mt-1.5 font-mono text-[11px]">
+                  <span className="bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+                    User: <strong className="text-blue-600">admin</strong>
+                  </span>
+                  <span className="bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+                    Pass: <strong className="text-blue-600">admin123456</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
           </form>
         </div>
       </div>
