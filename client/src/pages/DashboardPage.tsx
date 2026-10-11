@@ -102,6 +102,89 @@ export const DashboardPage: React.FC = () => {
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
 
+  // Responsive screen detection for dynamic chart sizing & layout across all devices
+  const [screenWidth, setScreenWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  );
+
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = screenWidth < 640;
+  const isTablet = screenWidth >= 640 && screenWidth < 1024;
+
+  // Smart responsive X-axis label formatter so all items fit cleanly on any device
+  const formatXAxisLabel = (label: string) => {
+    if (!isMobile) return label;
+    const monthShortLao: Record<string, string> = {
+      'ມັງກອນ': 'ມ.ກ',
+      'ກຸມພາ': 'ກ.ພ',
+      'ມີນາ': 'ມ.ນ',
+      'ເມສາ': 'ມ.ສ',
+      'ພຶດສະພາ': 'ພ.ພ',
+      'ມິຖຸນາ': 'ມ.ຖ',
+      'ກໍລະກົດ': 'ກ.ລ',
+      'ສິງຫາ': 'ສ.ຫ',
+      'ກັນຍາ': 'ກ.ຍ',
+      'ຕຸລາ': 'ຕ.ລ',
+      'ພະຈິກ': 'ພ.ຈ',
+      'ທັນວາ': 'ທ.ວ',
+    };
+    if (monthShortLao[label]) return monthShortLao[label];
+    if (typeof label === 'string' && label.startsWith('ອາທິດ ')) {
+      return 'ອ.' + label.replace('ອາທິດ ', '');
+    }
+    return label;
+  };
+
+  // Dynamic responsive bar thickness based on screen width and data granularity
+  const getResponsiveBarSize = (period: Timeframe) => {
+    if (isMobile) {
+      switch (period) {
+        case 'monthly':
+          return 14;
+        case 'daily':
+          return 20;
+        case 'weekly':
+          return 28;
+        case 'yearly':
+          return 34;
+        default:
+          return 20;
+      }
+    }
+    if (isTablet) {
+      switch (period) {
+        case 'monthly':
+          return 22;
+        case 'daily':
+          return 28;
+        case 'weekly':
+          return 38;
+        case 'yearly':
+          return 44;
+        default:
+          return 30;
+      }
+    }
+    // Desktop / Ultrawide
+    switch (period) {
+      case 'monthly':
+        return 32;
+      case 'daily':
+        return 38;
+      case 'weekly':
+        return 48;
+      case 'yearly':
+        return 52;
+      default:
+        return 40;
+    }
+  };
+
   const timeframeOptions: { key: Timeframe; label: string }[] = [
     { key: 'daily', label: t.dashboard.charts.daily || 'ລາຍວັນ' },
     { key: 'weekly', label: t.dashboard.charts.weekly || 'ລາຍອາທິດ' },
@@ -175,15 +258,18 @@ export const DashboardPage: React.FC = () => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const count = payload[0].value ?? 0;
+      const fullLabel =
+        data.fullDate ||
+        (data.range ? `${label} (${data.range})` : data.year ? `ປີ ${data.year}` : data.name || data.month || label);
       return (
-        <div className="bg-white/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-slate-200/90 text-xs min-w-[150px]">
+        <div className="bg-white/95 backdrop-blur-md p-2.5 sm:p-3 rounded-xl shadow-xl border border-slate-200/90 text-xs min-w-[140px] sm:min-w-[160px]">
           <div className="flex items-center gap-1.5 font-semibold text-slate-800 border-b border-slate-100 pb-1.5 mb-1.5">
             <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
-            <span>{data.fullDate || (data.range ? `${label} (${data.range})` : data.year ? `ປີ ${data.year}` : label)}</span>
+            <span className="truncate">{fullLabel}</span>
           </div>
           <div className="flex items-center justify-between gap-3">
             <span className="text-slate-500 font-medium">{docTypeLabel}:</span>
-            <span className="font-extrabold text-sm" style={{ color }}>
+            <span className="font-extrabold text-xs sm:text-sm" style={{ color }}>
               {count} ສະບັບ
             </span>
           </div>
@@ -414,19 +500,19 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart 1: Incoming Documents with Period Filter (Daily, Weekly, Monthly, Yearly) - Bar Chart Default */}
         <Card
-          className="border-blue-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          className="border-blue-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden min-w-0"
           headerClassName="bg-gradient-to-r from-blue-100/80 via-sky-50 to-blue-100/80 border-b border-blue-200/90"
           title={
-            <div className="flex items-center gap-2.5">
-              <span className="p-2 bg-blue-600 text-white rounded-xl shadow-xs shadow-blue-500/30">
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              <span className="p-2 bg-blue-600 text-white rounded-xl shadow-xs shadow-blue-500/30 shrink-0">
                 {incomingChartType === 'bar' ? <BarChart2 className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
               </span>
-              <div>
-                <h3 className="text-base font-bold text-blue-950">
+              <div className="min-w-0">
+                <h3 className="text-sm sm:text-base font-bold text-blue-950 truncate">
                   {t.dashboard.charts.incomingDocsStats || 'ສະຖິຕິເອກະສານຂາເຂົ້າ'}
                 </h3>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100/90 text-blue-800 border border-blue-200/90 shadow-2xs">
+                  <span className="inline-flex items-center text-[10px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-blue-100/90 text-blue-800 border border-blue-200/90 shadow-2xs">
                     {`ສະແດງຕາມ ${getTimeframeLabel(incomingPeriod)} • ລວມ ${totalIncomingInPeriod} ສະບັບ`}
                   </span>
                 </div>
@@ -434,16 +520,16 @@ export const DashboardPage: React.FC = () => {
             </div>
           }
           action={
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 w-full sm:w-auto">
               {/* Colored Timeframe Tabs Strip (ແຖບເລືອກຊ່ວງເວລາ: ລາຍວັນ, ລາຍອາທິດ, ລາຍເດືອນ, ລາຍປີ) */}
-              <div className="inline-flex items-center p-1 bg-gradient-to-r from-blue-100 via-sky-100 to-blue-100 rounded-xl border border-blue-200/90 shadow-2xs gap-1">
+              <div className="inline-flex items-center p-0.5 sm:p-1 bg-gradient-to-r from-blue-100 via-sky-100 to-blue-100 rounded-xl border border-blue-200/90 shadow-2xs gap-0.5 sm:gap-1 flex-1 sm:flex-initial">
                 {timeframeOptions.map((opt) => (
                   <button
                     key={opt.key}
                     type="button"
                     onClick={() => setIncomingPeriod(opt.key)}
                     className={clsx(
-                      'px-2.5 py-1 text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer',
+                      'px-1.5 sm:px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer flex-1 sm:flex-initial text-center justify-center',
                       incomingPeriod === opt.key
                         ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black shadow-sm shadow-blue-500/30 border border-blue-500 scale-[1.02]'
                         : 'bg-white/95 text-blue-950 font-bold border border-blue-200/80 hover:bg-white hover:text-blue-700 hover:border-blue-300 shadow-2xs'
@@ -457,19 +543,27 @@ export const DashboardPage: React.FC = () => {
                 type="button"
                 onClick={() => setIncomingChartType((prev) => (prev === 'bar' ? 'area' : 'bar'))}
                 title={incomingChartType === 'bar' ? (t.dashboard.charts.lineChart || 'ປ່ຽນເປັນເສັ້ນສະແດງ (Line/Area)') : (t.dashboard.charts.barChart || 'ປ່ຽນເປັນແຜນພູມແທ່ງ (Bar Chart)')}
-                className="p-1.5 rounded-xl border border-blue-200/90 bg-white hover:bg-blue-50 text-blue-700 hover:text-blue-900 shadow-2xs transition-colors cursor-pointer"
+                className="p-1.5 rounded-xl border border-blue-200/90 bg-white hover:bg-blue-50 text-blue-700 hover:text-blue-900 shadow-2xs transition-colors cursor-pointer shrink-0"
               >
                 {incomingChartType === 'bar' ? <Activity className="w-4 h-4" /> : <BarChart2 className="w-4 h-4" />}
               </button>
             </div>
           }
         >
-          <div className="h-72 w-full pt-2">
+          <div className="h-[250px] sm:h-[285px] lg:h-[320px] w-full pt-1 sm:pt-2">
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
             ) : incomingChartType === 'bar' ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={incomingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart
+                  data={incomingData}
+                  margin={{
+                    top: 10,
+                    right: isMobile ? 6 : 14,
+                    left: isMobile ? -14 : -6,
+                    bottom: 0,
+                  }}
+                >
                   <defs>
                     <linearGradient id="barIncomingGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#3b82f6" />
@@ -477,23 +571,46 @@ export const DashboardPage: React.FC = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <XAxis
+                    dataKey="label"
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    tickMargin={4}
+                    tickFormatter={formatXAxisLabel}
+                    interval={0}
+                  />
+                  <YAxis
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                    width={isMobile ? 26 : 34}
+                  />
                   <Tooltip content={<CustomChartTooltip color="#2563eb" docTypeLabel="ເອກະສານຂາເຂົ້າ" />} />
                   <Bar
                     dataKey="count"
                     fill="url(#barIncomingGrad)"
-                    maxBarSize={48}
-                    radius={[8, 8, 2, 2]}
+                    maxBarSize={getResponsiveBarSize(incomingPeriod)}
+                    radius={[6, 6, 2, 2]}
                     name="ເອກະສານຂາເຂົ້າ"
                     isAnimationActive={true}
-                    animationDuration={600}
+                    animationDuration={500}
                   />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={incomingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart
+                  data={incomingData}
+                  margin={{
+                    top: 10,
+                    right: isMobile ? 6 : 14,
+                    left: isMobile ? -14 : -6,
+                    bottom: 0,
+                  }}
+                >
                   <defs>
                     <linearGradient id="colorIncoming" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#2563eb" stopOpacity={0.4} />
@@ -501,21 +618,36 @@ export const DashboardPage: React.FC = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <XAxis
+                    dataKey="label"
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    tickMargin={4}
+                    tickFormatter={formatXAxisLabel}
+                    interval={0}
+                  />
+                  <YAxis
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                    width={isMobile ? 26 : 34}
+                  />
                   <Tooltip content={<CustomChartTooltip color="#2563eb" docTypeLabel="ເອກະສານຂາເຂົ້າ" />} />
                   <Area
                     type="monotone"
                     dataKey="count"
                     stroke="#2563eb"
-                    strokeWidth={3}
+                    strokeWidth={isMobile ? 2.5 : 3}
                     fillOpacity={1}
                     fill="url(#colorIncoming)"
-                    dot={{ r: 3.5, fill: '#2563eb', strokeWidth: 1.5, stroke: '#ffffff' }}
-                    activeDot={{ r: 6, fill: '#2563eb', stroke: '#ffffff', strokeWidth: 2 }}
+                    dot={{ r: isMobile ? 2.5 : 3.5, fill: '#2563eb', strokeWidth: 1.5, stroke: '#ffffff' }}
+                    activeDot={{ r: 5, fill: '#2563eb', stroke: '#ffffff', strokeWidth: 2 }}
                     name="ເອກະສານຂາເຂົ້າ"
                     isAnimationActive={true}
-                    animationDuration={600}
+                    animationDuration={500}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -525,19 +657,19 @@ export const DashboardPage: React.FC = () => {
 
         {/* Chart 2: Outgoing Documents with Period Filter (Daily, Weekly, Monthly, Yearly) - Bar Chart Default */}
         <Card
-          className="border-indigo-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          className="border-indigo-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden min-w-0"
           headerClassName="bg-gradient-to-r from-indigo-100/80 via-purple-50 to-indigo-100/80 border-b border-indigo-200/90"
           title={
-            <div className="flex items-center gap-2.5">
-              <span className="p-2 bg-indigo-600 text-white rounded-xl shadow-xs shadow-indigo-500/30">
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              <span className="p-2 bg-indigo-600 text-white rounded-xl shadow-xs shadow-indigo-500/30 shrink-0">
                 {outgoingChartType === 'bar' ? <BarChart2 className="w-4 h-4" /> : <Send className="w-4 h-4" />}
               </span>
-              <div>
-                <h3 className="text-base font-bold text-indigo-950">
+              <div className="min-w-0">
+                <h3 className="text-sm sm:text-base font-bold text-indigo-950 truncate">
                   {t.dashboard.charts.outgoingDocsStats || 'ສະຖິຕິເອກະສານຂາອອກ'}
                 </h3>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-100/90 text-indigo-800 border border-indigo-200/90 shadow-2xs">
+                  <span className="inline-flex items-center text-[10px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-indigo-100/90 text-indigo-800 border border-indigo-200/90 shadow-2xs">
                     {`ສະແດງຕາມ ${getTimeframeLabel(outgoingPeriod)} • ລວມ ${totalOutgoingInPeriod} ສະບັບ`}
                   </span>
                 </div>
@@ -545,16 +677,16 @@ export const DashboardPage: React.FC = () => {
             </div>
           }
           action={
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 w-full sm:w-auto">
               {/* Colored Timeframe Tabs Strip (ແຖບເລືອກຊ່ວງເວລາ: ລາຍວັນ, ລາຍອາທິດ, ລາຍເດືອນ, ລາຍປີ) */}
-              <div className="inline-flex items-center p-1 bg-gradient-to-r from-indigo-100 via-purple-100 to-indigo-100 rounded-xl border border-indigo-200/90 shadow-2xs gap-1">
+              <div className="inline-flex items-center p-0.5 sm:p-1 bg-gradient-to-r from-indigo-100 via-purple-100 to-indigo-100 rounded-xl border border-indigo-200/90 shadow-2xs gap-0.5 sm:gap-1 flex-1 sm:flex-initial">
                 {timeframeOptions.map((opt) => (
                   <button
                     key={opt.key}
                     type="button"
                     onClick={() => setOutgoingPeriod(opt.key)}
                     className={clsx(
-                      'px-2.5 py-1 text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer',
+                      'px-1.5 sm:px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer flex-1 sm:flex-initial text-center justify-center',
                       outgoingPeriod === opt.key
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black shadow-sm shadow-indigo-500/30 border border-indigo-500 scale-[1.02]'
                         : 'bg-white/95 text-indigo-950 font-bold border border-indigo-200/80 hover:bg-white hover:text-indigo-700 hover:border-indigo-300 shadow-2xs'
@@ -568,19 +700,27 @@ export const DashboardPage: React.FC = () => {
                 type="button"
                 onClick={() => setOutgoingChartType((prev) => (prev === 'bar' ? 'area' : 'bar'))}
                 title={outgoingChartType === 'bar' ? (t.dashboard.charts.lineChart || 'ປ່ຽນເປັນເສັ້ນສະແດງ (Line/Area)') : (t.dashboard.charts.barChart || 'ປ່ຽນເປັນແຜນພູມແທ່ງ (Bar Chart)')}
-                className="p-1.5 rounded-xl border border-indigo-200/90 bg-white hover:bg-indigo-50 text-indigo-700 hover:text-indigo-900 shadow-2xs transition-colors cursor-pointer"
+                className="p-1.5 rounded-xl border border-indigo-200/90 bg-white hover:bg-indigo-50 text-indigo-700 hover:text-indigo-900 shadow-2xs transition-colors cursor-pointer shrink-0"
               >
                 {outgoingChartType === 'bar' ? <Activity className="w-4 h-4" /> : <BarChart2 className="w-4 h-4" />}
               </button>
             </div>
           }
         >
-          <div className="h-72 w-full pt-2">
+          <div className="h-[250px] sm:h-[285px] lg:h-[320px] w-full pt-1 sm:pt-2">
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
             ) : outgoingChartType === 'bar' ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={outgoingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart
+                  data={outgoingData}
+                  margin={{
+                    top: 10,
+                    right: isMobile ? 6 : 14,
+                    left: isMobile ? -14 : -6,
+                    bottom: 0,
+                  }}
+                >
                   <defs>
                     <linearGradient id="barOutgoingGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#818cf8" />
@@ -588,23 +728,46 @@ export const DashboardPage: React.FC = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <XAxis
+                    dataKey="label"
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    tickMargin={4}
+                    tickFormatter={formatXAxisLabel}
+                    interval={0}
+                  />
+                  <YAxis
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                    width={isMobile ? 26 : 34}
+                  />
                   <Tooltip content={<CustomChartTooltip color="#6366f1" docTypeLabel="ເອກະສານຂາອອກ" />} />
                   <Bar
                     dataKey="count"
                     fill="url(#barOutgoingGrad)"
-                    maxBarSize={48}
-                    radius={[8, 8, 2, 2]}
+                    maxBarSize={getResponsiveBarSize(outgoingPeriod)}
+                    radius={[6, 6, 2, 2]}
                     name="ເອກະສານຂາອອກ"
                     isAnimationActive={true}
-                    animationDuration={600}
+                    animationDuration={500}
                   />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={outgoingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart
+                  data={outgoingData}
+                  margin={{
+                    top: 10,
+                    right: isMobile ? 6 : 14,
+                    left: isMobile ? -14 : -6,
+                    bottom: 0,
+                  }}
+                >
                   <defs>
                     <linearGradient id="colorOutgoing" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
@@ -612,21 +775,36 @@ export const DashboardPage: React.FC = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <XAxis
+                    dataKey="label"
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    tickMargin={4}
+                    tickFormatter={formatXAxisLabel}
+                    interval={0}
+                  />
+                  <YAxis
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                    width={isMobile ? 26 : 34}
+                  />
                   <Tooltip content={<CustomChartTooltip color="#6366f1" docTypeLabel="ເອກະສານຂາອອກ" />} />
                   <Area
                     type="monotone"
                     dataKey="count"
                     stroke="#6366f1"
-                    strokeWidth={3}
+                    strokeWidth={isMobile ? 2.5 : 3}
                     fillOpacity={1}
                     fill="url(#colorOutgoing)"
-                    dot={{ r: 3.5, fill: '#6366f1', strokeWidth: 1.5, stroke: '#ffffff' }}
-                    activeDot={{ r: 6, fill: '#6366f1', stroke: '#ffffff', strokeWidth: 2 }}
+                    dot={{ r: isMobile ? 2.5 : 3.5, fill: '#6366f1', strokeWidth: 1.5, stroke: '#ffffff' }}
+                    activeDot={{ r: 5, fill: '#6366f1', stroke: '#ffffff', strokeWidth: 2 }}
                     name="ເອກະສານຂາອອກ"
                     isAnimationActive={true}
-                    animationDuration={600}
+                    animationDuration={500}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -636,25 +814,25 @@ export const DashboardPage: React.FC = () => {
 
         {/* Chart 3: Tasks by Status (Donut Chart) */}
         <Card
-          className="border-amber-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          className="border-amber-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden min-w-0"
           headerClassName="bg-gradient-to-r from-amber-100/80 via-orange-50 to-amber-100/80 border-b border-amber-200/90"
           title={
-            <div className="flex items-center gap-2.5">
-              <span className="p-2 bg-amber-500 text-white rounded-xl shadow-xs shadow-amber-500/30">
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              <span className="p-2 bg-amber-500 text-white rounded-xl shadow-xs shadow-amber-500/30 shrink-0">
                 <Activity className="w-4 h-4" />
               </span>
-              <div>
-                <h3 className="text-base font-bold text-amber-950">
+              <div className="min-w-0">
+                <h3 className="text-sm sm:text-base font-bold text-amber-950 truncate">
                   {t.dashboard.charts.tasksByStatus || 'ສະຖານະວຽກງານທັງໝົດ'}
                 </h3>
-                <p className="text-xs text-amber-900/70 font-medium">
+                <p className="text-[10px] sm:text-xs text-amber-900/70 font-medium truncate">
                   ອັດຕາສ່ວນຄວາມຄືບໜ້າຂອງວຽກງານ
                 </p>
               </div>
             </div>
           }
         >
-          <div className="h-72 w-full flex items-center justify-center">
+          <div className="h-[250px] sm:h-[285px] lg:h-[320px] w-full flex items-center justify-center">
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
             ) : (
@@ -664,8 +842,8 @@ export const DashboardPage: React.FC = () => {
                     data={stats?.charts.tasksByStatus || []}
                     cx="50%"
                     cy="50%"
-                    innerRadius={65}
-                    outerRadius={95}
+                    innerRadius={isMobile ? 48 : 65}
+                    outerRadius={isMobile ? 74 : 95}
                     paddingAngle={3}
                     dataKey="count"
                     nameKey="status"
@@ -685,7 +863,7 @@ export const DashboardPage: React.FC = () => {
                       fontSize: '12px',
                     }}
                   />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: '11px' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: isMobile ? '10px' : '11px', paddingTop: '4px' }} />
                 </PieChart>
               </ResponsiveContainer>
             )}
@@ -694,25 +872,25 @@ export const DashboardPage: React.FC = () => {
 
         {/* Chart 4: Tasks by Department */}
         <Card
-          className="border-emerald-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          className="border-emerald-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden min-w-0"
           headerClassName="bg-gradient-to-r from-emerald-100/80 via-teal-50 to-emerald-100/80 border-b border-emerald-200/90"
           title={
-            <div className="flex items-center gap-2.5">
-              <span className="p-2 bg-emerald-600 text-white rounded-xl shadow-xs shadow-emerald-500/30">
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              <span className="p-2 bg-emerald-600 text-white rounded-xl shadow-xs shadow-emerald-500/30 shrink-0">
                 <Building className="w-4 h-4" />
               </span>
-              <div>
-                <h3 className="text-base font-bold text-emerald-950">
+              <div className="min-w-0">
+                <h3 className="text-sm sm:text-base font-bold text-emerald-950 truncate">
                   {t.dashboard.charts.tasksByDept || 'ຈຳນວນວຽກງານແຕ່ລະພະແນກ'}
                 </h3>
-                <p className="text-xs text-emerald-900/70 font-medium">
+                <p className="text-[10px] sm:text-xs text-emerald-900/70 font-medium truncate">
                   ການແບ່ງປັນວຽກງານຕາມພະແນກການ
                 </p>
               </div>
             </div>
           }
         >
-          <div className="h-72 w-full pt-2">
+          <div className="h-[250px] sm:h-[285px] lg:h-[320px] w-full pt-1 sm:pt-2">
             {loading ? (
               <LoadingSkeleton className="w-full h-full" />
             ) : (
@@ -720,31 +898,65 @@ export const DashboardPage: React.FC = () => {
                 <BarChart
                   data={stats?.charts.tasksByDept || []}
                   layout="vertical"
-                  margin={{ left: 20 }}
+                  margin={{
+                    top: 8,
+                    right: isMobile ? 14 : 24,
+                    left: isMobile ? -10 : 2,
+                    bottom: 4,
+                  }}
                 >
+                  <defs>
+                    <linearGradient id="barDeptGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#10b981" />
+                      <stop offset="100%" stopColor="#059669" />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
-                  <XAxis type="number" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                  <XAxis
+                    type="number"
+                    stroke="#94a3b8"
+                    fontSize={isMobile ? 10 : 11}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                  />
                   <YAxis
                     dataKey="dept"
                     type="category"
                     stroke="#475569"
-                    fontSize={11}
+                    fontSize={isMobile ? 10 : 11}
                     tickLine={false}
-                    width={110}
+                    axisLine={false}
+                    width={isMobile ? 85 : 125}
+                    tickFormatter={(dept: string) =>
+                      isMobile && dept && dept.length > 8 ? dept.substring(0, 7) + '…' : dept
+                    }
                   />
                   <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#ffffff',
-                      borderRadius: '12px',
-                      border: '1px solid #e2e8f0',
-                      fontSize: '12px',
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white/95 backdrop-blur-md p-2.5 rounded-xl shadow-xl border border-slate-200/90 text-xs min-w-[130px]">
+                            <div className="font-bold text-slate-800 border-b border-slate-100 pb-1 mb-1">{data.dept}</div>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-slate-500 font-medium">ຈຳນວນວຽກງານ:</span>
+                              <span className="text-emerald-600 font-extrabold text-sm">{payload[0].value} ວຽກງານ</span>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
                     }}
                   />
                   <Bar
                     dataKey="count"
-                    fill="#3b82f6"
+                    fill="url(#barDeptGrad)"
                     radius={[0, 6, 6, 0]}
+                    maxBarSize={isMobile ? 18 : 26}
                     name="ຈຳນວນວຽກງານ"
+                    isAnimationActive={true}
+                    animationDuration={500}
                   />
                 </BarChart>
               </ResponsiveContainer>
