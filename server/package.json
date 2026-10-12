@@ -1,6 +1,6 @@
 {
   "name": "edoc-server",
-  "version": "v11.10.2026",
+  "version": "v0.1",
   "private": true,
   "main": "src/server.ts",
   "scripts": {

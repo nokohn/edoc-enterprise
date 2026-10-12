@@ -45,7 +45,7 @@ export const exportBackup = async (req: Request, res: Response): Promise<void> =
 
     const backupData = {
       system: 'E-Document Management',
-      version: 'v11.10.2026',
+      version: 'v0.1',
       exportedAt: new Date().toISOString(),
       scope,
       totalCount: incomingDocs.length + outgoingDocs.length,

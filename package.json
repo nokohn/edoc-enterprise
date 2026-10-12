@@ -1,6 +1,6 @@
 {
   "name": "edoc-lao-enterprise",
-  "version": "v11.10.2026",
+  "version": "v0.1",
   "description": "E-Document Management - ລະບົບຄຸ້ມຄອງເອກະສານ ແລະ ການໄຫຼວຽນວຽກງານອິເລັກໂຕຣນິກ (Electronic Document & Workflow Management System)",
   "private": true,
   "workspaces": [
