@@ -38,10 +38,11 @@ RUN apk add --no-cache openssl
 
 # Copy package manifests
 COPY package*.json ./
+COPY client/package*.json ./client/
 COPY server/package*.json ./server/
 
 # Install production dependencies only
-RUN npm ci --omit=dev --workspace=server
+RUN npm ci --omit=dev
 
 # Copy compiled bundles and assets
 COPY --from=builder /app/client/dist ./client/dist
@@ -49,12 +50,10 @@ COPY --from=builder /app/server/dist ./server/dist
 COPY --from=builder /app/server/prisma ./server/prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/server/node_modules/@prisma ./server/node_modules/@prisma
-COPY --from=builder /app/server/node_modules/.prisma ./server/node_modules/.prisma
 
 # Create uploads storage folder
 RUN mkdir -p /app/server/uploads /app/uploads
 
 EXPOSE 5000
 
-CMD ["node", "server/dist/server.js"]
+CMD ["sh", "-c", "npx prisma db push --schema=server/prisma/schema.prisma --accept-data-loss && node server/dist/server.js"]
