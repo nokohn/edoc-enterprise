@@ -32,6 +32,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=5000
+ENV DATABASE_URL="file:/app/server/prisma/dev.db"
+ENV JWT_SECRET="edoc_super_secret_jwt_key_lao_pdr_2026_secure"
+ENV UPLOAD_DIR="./uploads"
 
 # Required by Prisma on Alpine Linux
 RUN apk add --no-cache openssl
@@ -56,4 +59,4 @@ RUN mkdir -p /app/server/uploads /app/uploads
 
 EXPOSE 5000
 
-CMD ["sh", "-c", "npx prisma db push --schema=server/prisma/schema.prisma --accept-data-loss && node server/dist/server.js"]
+CMD ["node", "server/dist/server.js"]
