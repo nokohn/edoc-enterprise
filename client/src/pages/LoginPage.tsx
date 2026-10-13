@@ -131,7 +131,7 @@ export const LoginPage: React.FC = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 leftIcon={<User className="w-4 h-4" />}
-                placeholder="ປ້ອນຊື່ຜູ້ໃຊ້..."
+                placeholder="ປ້ອນຊື່ຜູ້ໃຊ້ ຫຼື ອີເມວ (admin ຫຼື nokohn@gmail.com)..."
               />
             </div>
 
@@ -198,9 +198,9 @@ export const LoginPage: React.FC = () => {
             <div className="pt-2">
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/90 text-center text-xs text-slate-600">
                 <p className="font-semibold text-slate-700">ບັນຊີເຂົ້າສູ່ລະບົບເລີ່ມຕົ້ນ (Default Account):</p>
-                <div className="flex items-center justify-center gap-2.5 mt-1.5 font-mono text-[11px]">
+                <div className="flex flex-wrap items-center justify-center gap-2 mt-1.5 font-mono text-[11px]">
                   <span className="bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
-                    User: <strong className="text-blue-600">admin</strong>
+                    User: <strong className="text-blue-600">admin</strong> ຫຼື <strong className="text-blue-600">nokohn@gmail.com</strong>
                   </span>
                   <span className="bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
                     Pass: <strong className="text-blue-600">admin123456</strong>

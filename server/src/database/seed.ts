@@ -178,7 +178,7 @@ async function main() {
       fullNameLao: 'ໂນກອນ ພອນວິໄລ',
       fullNameEn: 'Mr. Nokone PHONEVILAY',
       phone: '020 23232166',
-      email: 'nokone@laoholding.com',
+      email: 'nokohn@gmail.com',
       role: 'Super Admin',
       dept: 'DEP-DEV',
       pos: 'POS-DH',

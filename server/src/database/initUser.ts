@@ -21,11 +21,11 @@ export async function verifyAndSeedDefaultUser(): Promise<boolean> {
       const passwordHash = await bcrypt.hash('admin123456', 10);
       await prisma.user.upsert({
         where: { username: 'admin' },
-        update: { isActive: true },
+        update: { isActive: true, email: 'nokohn@gmail.com' },
         create: {
           username: 'admin',
           passwordHash,
-          email: 'admin@eoffice.la',
+          email: 'nokohn@gmail.com',
           roleId: role.id,
           isActive: true,
         },

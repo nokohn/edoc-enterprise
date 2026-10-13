@@ -219,7 +219,7 @@ export const translations: Record<Language, Translations> = {
     login: {
       title: "ເຂົ້າສູ່ລະບົບ E-Document Management",
       subtitle: "ລະບົບຄຸ້ມຄອງເອກະສານ ແລະ ການໄຫຼວຽນວຽກງານອິເລັກໂຕຣນິກ",
-      username: "ຊື່ຜູ້ໃຊ້ (Username)",
+      username: "ຊື່ຜູ້ໃຊ້ ຫຼື ອີເມວ (Username or Email)",
       password: "ລະຫັດຜ່ານ (Password)",
       showPassword: "ສະແດງລະຫັດຜ່ານ",
       hidePassword: "ເຊື່ອງລະຫັດຜ່ານ",
@@ -430,7 +430,7 @@ export const translations: Record<Language, Translations> = {
     login: {
       title: "Sign in to E-Document Management",
       subtitle: "Electronic Document & Workflow Management System",
-      username: "Username",
+      username: "Username or Email",
       password: "Password",
       showPassword: "Show password",
       hidePassword: "Hide password",

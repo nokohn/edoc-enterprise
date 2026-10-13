@@ -13,12 +13,22 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      res.status(400).json({ success: false, message: 'ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ ແລະ ລະຫັດຜ່ານ (Username and password are required)' });
+      res.status(400).json({ success: false, message: 'ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ ຫຼື ອີເມວ ແລະ ລະຫັດຜ່ານ (Username or email and password are required)' });
       return;
     }
 
-    let user = await prisma.user.findUnique({
-      where: { username },
+    const loginIdentifier = username.trim();
+    const isEmail = loginIdentifier.includes('@');
+
+    let user = await prisma.user.findFirst({
+      where: isEmail
+        ? { email: { equals: loginIdentifier } }
+        : {
+            OR: [
+              { username: loginIdentifier },
+              { email: loginIdentifier },
+            ],
+          },
       include: {
         role: {
           include: {
@@ -33,17 +43,22 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       }
     }).catch(async (dbErr) => {
       console.warn('DB query error on login, attempting self-heal...', dbErr?.message);
-      if (username === 'admin') {
+      if (loginIdentifier.toLowerCase() === 'admin' || loginIdentifier.toLowerCase() === 'nokohn@gmail.com') {
         await verifyAndSeedDefaultUser();
       }
       return null;
     });
 
-    if (!user && username === 'admin') {
+    if (!user && (loginIdentifier.toLowerCase() === 'admin' || loginIdentifier.toLowerCase() === 'nokohn@gmail.com')) {
       console.log('Admin user missing, triggering self-healing seed...');
       await verifyAndSeedDefaultUser();
-      user = await prisma.user.findUnique({
-        where: { username: 'admin' },
+      user = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { username: 'admin' },
+            { email: 'nokohn@gmail.com' },
+          ],
+        },
         include: {
           role: {
             include: {
