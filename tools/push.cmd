@@ -1,9 +1,8 @@
 @echo off
 cd /d "%~dp0\.."
 cls
-set "PATH=C:\Users\Quitar kEOOUDOME\AppData\Local\Microsoft\WinGet\Packages\Git.MinGit_Microsoft.Winget.Source_8wekyb3d8bbwe\cmd;%PATH%"
 echo ========================================================
-echo   Pushing E-Doc to GitHub (noysmk142-stack/edoc-enterprise)
+echo   Pushing E-Doc to GitHub (nokohn/edoc-enterprise)
 echo ========================================================
 echo.
 git push origin main

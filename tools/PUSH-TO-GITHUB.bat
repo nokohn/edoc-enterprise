@@ -5,7 +5,7 @@ color 0B
 cd /d "%~dp0\.."
 cls
 echo ============================================================
-echo   🚀 กำลัง Push Code ຂຶ້ນ GitHub (noysmk142-stack/edoc-enterprise)...
+echo   🚀 กำลัง Push Code ຂຶ້ນ GitHub (nokohn/edoc-enterprise)...
 echo ============================================================
 echo.
 git push -u origin main

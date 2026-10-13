@@ -1,10 +1,8 @@
 @echo off
 cd /d "%~dp0\.."
 cls
-set "PATH=C:\Users\Quitar kEOOUDOME\AppData\Local\Microsoft\WinGet\Packages\Git.MinGit_Microsoft.Winget.Source_8wekyb3d8bbwe\cmd;C:\Users\Quitar kEOOUDOME\AppData\Local\Microsoft\WinGet\Packages\GitHub.cli_Microsoft.Winget.Source_8wekyb3d8bbwe\bin;%PATH%"
-
 echo ========================================================
-echo   E-Doc GitHub Authentication and Push
+echo   E-Doc GitHub Authentication (nokohn@gmail.com) and Push
 echo ========================================================
 echo.
 echo 1. ກະລຸນາກົດ Enter ເພື່ອເຂົ້າສູ່ລະບົບ GitHub ຜ່ານ Browser...
