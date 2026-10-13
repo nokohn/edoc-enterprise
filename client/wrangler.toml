@@ -1,0 +1,6 @@
+name = "edoc-enterprise"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+[vars]
+BACKEND_URL = "https://edoc-enterprise.onrender.com"
