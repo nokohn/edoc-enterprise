@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../database/prisma.js';
 import { logAudit } from '../services/audit.service.js';
+import { verifyAndSeedDefaultUser } from '../database/initUser.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'edoc_super_secret_jwt_key_lao_pdr_2026_secure';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
@@ -16,7 +17,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { username },
       include: {
         role: {
@@ -30,7 +31,33 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         position: true,
         employee: true,
       }
+    }).catch(async (dbErr) => {
+      console.warn('DB query error on login, attempting self-heal...', dbErr?.message);
+      if (username === 'admin') {
+        await verifyAndSeedDefaultUser();
+      }
+      return null;
     });
+
+    if (!user && username === 'admin') {
+      console.log('Admin user missing, triggering self-healing seed...');
+      await verifyAndSeedDefaultUser();
+      user = await prisma.user.findUnique({
+        where: { username: 'admin' },
+        include: {
+          role: {
+            include: {
+              rolePermissions: {
+                include: { permission: true }
+              }
+            }
+          },
+          department: true,
+          position: true,
+          employee: true,
+        }
+      }).catch(() => null);
+    }
 
     if (!user) {
       res.status(401).json({ success: false, message: 'ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ (Invalid credentials)' });

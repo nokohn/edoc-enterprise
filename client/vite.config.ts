@@ -23,5 +23,18 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          lucide: ['lucide-react'],
+          charts: ['recharts'],
+          query: ['@tanstack/react-query', 'sweetalert2'],
+        }
+      }
+    }
   }
 });

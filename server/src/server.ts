@@ -37,40 +37,7 @@ if (!process.env.JWT_SECRET) {
 
 import { createApp } from './app.js';
 import { prisma } from './database/prisma.js';
-import bcrypt from 'bcryptjs';
-
-async function verifyAndSeedDefaultUser() {
-  try {
-    const userCount = await prisma.user.count();
-    if (userCount === 0) {
-      console.log('🌱 No users found in database. Initializing default Super Admin...');
-      let role = await prisma.role.findFirst({ where: { name: 'Super Admin' } });
-      if (!role) {
-        role = await prisma.role.create({
-          data: {
-            name: 'Super Admin',
-            nameLao: 'ຜູ້ດູແລລະບົບສູງສຸດ',
-            description: 'ຄວບຄຸມລະບົບ ແລະ ຈັດການສິດທັງໝົດ',
-            isSystem: true,
-          },
-        });
-      }
-      const passwordHash = await bcrypt.hash('admin123456', 10);
-      await prisma.user.create({
-        data: {
-          username: 'admin',
-          passwordHash,
-          email: 'admin@eoffice.la',
-          roleId: role.id,
-          isActive: true,
-        },
-      });
-      console.log('✅ Default Super Admin (admin / admin123456) ready!');
-    }
-  } catch (err: any) {
-    console.warn('DB check note:', err?.message || err);
-  }
-}
+import { verifyAndSeedDefaultUser } from './database/initUser.js';
 
 const PORT = process.env.PORT || 5000;
 const app = createApp();
