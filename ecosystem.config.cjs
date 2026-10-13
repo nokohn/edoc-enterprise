@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'edoc-app',
-      cwd: 'd:\\E-Doc for Dv',
+      cwd: __dirname,
       script: 'server/dist/server.js',
       env: {
         NODE_ENV: 'production',
@@ -14,7 +14,7 @@ module.exports = {
     },
     {
       name: 'edoc-tunnel',
-      cwd: 'd:\\E-Doc for Dv',
+      cwd: __dirname,
       script: 'tools/tunnel-runner.js',
       restart_delay: 5000,
       autorestart: true,
