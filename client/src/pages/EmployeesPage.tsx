@@ -21,7 +21,7 @@ import { DataTable, Column } from '../components/ui/DataTable';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
-import { Badge } from '../components/ui/Badge';
+import { Badge, EmployeeStatusBadge } from '../components/ui/Badge';
 
 export const EmployeesPage: React.FC = () => {
   const { t } = useTranslation();
@@ -333,16 +333,7 @@ export const EmployeesPage: React.FC = () => {
     {
       key: 'status',
       header: 'ສະຖານະ',
-      render: (item) =>
-        item.isActive ? (
-          <Badge variant="success" size="sm">
-            ເປີດໃຊ້ງານ
-          </Badge>
-        ) : (
-          <Badge variant="danger" size="sm">
-            ລະງັບ
-          </Badge>
-        ),
+      render: (item) => <EmployeeStatusBadge isActive={item.isActive} size="sm" />,
     },
     {
       key: 'actions',

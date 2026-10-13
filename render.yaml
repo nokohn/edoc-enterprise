@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     buildCommand: npm install --include=dev && npx prisma generate --schema=server/prisma/schema.prisma && npm run build
-    startCommand: npx prisma db push --schema=server/prisma/schema.prisma --accept-data-loss && node server/dist/server.js
+    startCommand: npx prisma db push --schema=server/prisma/schema.prisma --accept-data-loss && node server/dist/database/seed.js && node server/dist/server.js
     envVars:
       - key: NODE_ENV
         value: production

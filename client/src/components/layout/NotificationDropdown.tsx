@@ -114,7 +114,7 @@ export const NotificationDropdown: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm text-slate-800">ແຈ້ງເຕືອນ</span>
               {unreadCount > 0 && (
-                <Badge variant="danger" size="sm">
+                <Badge variant="danger" size="sm" icon={<Bell className="w-3 h-3" />}>
                   {unreadCount} ໃໝ່
                 </Badge>
               )}

@@ -1,5 +1,5 @@
 @echo off
-cd /d "d:\E-Doc for Dv"
+cd /d "%~dp0\.."
 cls
 echo ========================================================
 echo   Pushing E-Doc to GitHub (noysmk142-stack/edoc-enterprise)

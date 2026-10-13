@@ -674,25 +674,7 @@ export const ReportsPage: React.FC = () => {
                         {item.department?.nameLao || '-'}
                       </td>
                       <td className="border border-slate-700 py-3 px-1.5 text-center font-bold text-[11px]">
-                        <span className={`inline-block px-1.5 py-0.5 rounded ${
-                          item.status === 'COMPLETED'
-                            ? 'text-emerald-800 bg-emerald-50'
-                            : item.status === 'IN_PROGRESS'
-                            ? 'text-amber-800 bg-amber-50'
-                            : item.status === 'ASSIGNED'
-                            ? 'text-blue-800 bg-blue-50'
-                            : 'text-slate-800 bg-slate-100'
-                        }`}>
-                          {item.status === 'COMPLETED'
-                            ? 'ສຳເລັດ'
-                            : item.status === 'IN_PROGRESS'
-                            ? 'ດຳເນີນ'
-                            : item.status === 'ASSIGNED'
-                            ? 'ມອບໝາຍ'
-                            : item.status === 'REVIEWING'
-                            ? 'ກວດກາ'
-                            : 'ໃໝ່'}
-                        </span>
+                        <StatusBadge status={item.status || item.approvalStatus} size="sm" />
                       </td>
                     </tr>
                   ))}

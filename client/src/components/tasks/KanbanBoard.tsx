@@ -1,7 +1,7 @@
 import React from 'react';
 import { Task } from '../../types';
 import { PriorityBadge } from '../ui/Badge';
-import { Clock, CheckCircle2, ChevronRight, User, AlertCircle } from 'lucide-react';
+import { Clock, CheckCircle2, ChevronRight, User, AlertCircle, Sparkles, UserCheck, Hourglass, Eye } from 'lucide-react';
 import { api } from '../../api/client';
 import Swal from 'sweetalert2';
 
@@ -12,12 +12,12 @@ export interface KanbanBoardProps {
 }
 
 const COLUMNS = [
-  { key: 'NEW', label: 'ໃໝ່ (New)', color: 'bg-slate-100 text-slate-700 border-slate-300' },
-  { key: 'ASSIGNED', label: 'ມອບໝາຍແລ້ວ (Assigned)', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  { key: 'IN_PROGRESS', label: 'ກຳລັງດຳເນີນ (In Progress)', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  { key: 'WAITING', label: 'ລໍຖ້າ (Waiting)', color: 'bg-orange-50 text-orange-700 border-orange-200' },
-  { key: 'REVIEWING', label: 'ກວດກາ (Review)', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-  { key: 'COMPLETED', label: 'ສຳເລັດສົມບູນ (Completed)', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  { key: 'NEW', label: 'ໃໝ່ (New)', icon: Sparkles, color: 'bg-slate-100 text-slate-700 border-slate-300' },
+  { key: 'ASSIGNED', label: 'ມອບໝາຍແລ້ວ (Assigned)', icon: UserCheck, color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  { key: 'IN_PROGRESS', label: 'ກຳລັງດຳເນີນ (In Progress)', icon: Clock, color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  { key: 'WAITING', label: 'ລໍຖ້າ (Waiting)', icon: Hourglass, color: 'bg-orange-50 text-orange-700 border-orange-200' },
+  { key: 'REVIEWING', label: 'ກວດກາ (Review)', icon: Eye, color: 'bg-purple-50 text-purple-700 border-purple-200' },
+  { key: 'COMPLETED', label: 'ສຳເລັດສົມບູນ (Completed)', icon: CheckCircle2, color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
 ];
 
 export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, onRefresh, onTaskClick }) => {
@@ -68,7 +68,8 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks, onRefresh, onTa
           >
             {/* Column Header */}
             <div className="flex items-center justify-between px-2 py-1.5 mb-2.5">
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${col.color}`}>
+              <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg border ${col.color}`}>
+                <col.icon className="w-3.5 h-3.5 shrink-0" />
                 {col.label}
               </span>
               <span className="text-xs font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">

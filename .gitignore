@@ -20,6 +20,9 @@ yarn-error.log*
 # Tools binary
 tools/cloudflared.exe
 
-# OS generated files
+# OS & temp generated files
 .DS_Store
 Thumbs.db
+~$*
+~*
+*.tmp

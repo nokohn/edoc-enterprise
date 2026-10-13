@@ -447,13 +447,13 @@ export const OutgoingDocsPage: React.FC = () => {
               className="py-1.5 px-2.5 rounded-lg border border-slate-300 bg-white text-slate-700 focus:outline-none focus:border-blue-500"
             >
               <option value="">ສະຖານະອະນຸມັດ (ທັງໝົດ)</option>
-              <option value="DRAFT">ຮ່າງເອກະສານ (Draft)</option>
-              <option value="REVIEW">ກຳລັງກວດກາ (Review)</option>
-              <option value="DEPT_APPROVAL">ຫົວໜ້າພະແນກກວດກາ</option>
-              <option value="DIRECTOR_APPROVAL">ລໍຖ້າຜູ້ອຳນວຍການອະນຸມັດ</option>
-              <option value="APPROVED">ອະນຸມັດແລ້ວ (Approved)</option>
-              <option value="SENT">ສົ່ງອອກແລ້ວ (Sent)</option>
-              <option value="REJECTED">ຖືກສົ່ງກັບຄືນ (Rejected)</option>
+              <option value="DRAFT">📝 ຮ່າງເອກະສານ (Draft)</option>
+              <option value="REVIEW">🔍 ກຳລັງກວດກາ (Review)</option>
+              <option value="DEPT_APPROVAL">👤 ຫົວໜ້າພະແນກກວດກາ (Dept Approval)</option>
+              <option value="DIRECTOR_APPROVAL">👑 ລໍຖ້າຜູ້ອຳນວຍການອະນຸມັດ (Director Approval)</option>
+              <option value="APPROVED">✅ ອະນຸມັດແລ້ວ (Approved)</option>
+              <option value="SENT">📤 ສົ່ງອອກແລ້ວ (Sent)</option>
+              <option value="REJECTED">❌ ຖືກສົ່ງກັບຄືນ (Rejected)</option>
             </select>
           </div>
         }

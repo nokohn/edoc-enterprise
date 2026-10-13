@@ -25,11 +25,13 @@ import {
   Check,
   Play,
   Pause,
+  Award,
 } from 'lucide-react';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { StatusBadge, PriorityBadge } from '../components/ui/Badge';
 import { DocumentTrackingSheet } from '../components/documents/DocumentTrackingSheet';
 import { DocumentDetailModal } from '../components/documents/DocumentDetailModal';
 import { SignaturePadModal } from '../components/common/SignaturePadModal';
@@ -196,21 +198,21 @@ export const ApprovalWorkflowPage: React.FC = () => {
   const getStepInfo = (status: string) => {
     switch (status) {
       case 'DRAFT':
-        return { step: 1, title: 'ຜູ້ຄົ້ນຄວ້າ / ສ້າງຮ່າງ', color: 'bg-slate-100 text-slate-700 border-slate-300' };
+        return { step: 1, title: 'ຜູ້ຄົ້ນຄວ້າ / ສ້າງຮ່າງ', icon: FileText, color: 'bg-slate-100 text-slate-700 border-slate-300' };
       case 'REVIEW':
-        return { step: 2, title: 'ຄຳເຫັນຂອງຄະນະໜ່ວຍງານ', color: 'bg-amber-50 text-amber-800 border-amber-300' };
+        return { step: 2, title: 'ຄຳເຫັນຂອງຄະນະໜ່ວຍງານ', icon: Eye, color: 'bg-amber-50 text-amber-800 border-amber-300' };
       case 'DEPT_APPROVAL':
-        return { step: 3, title: 'ຄຳເຫັນຂອງຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ', color: 'bg-blue-50 text-blue-800 border-blue-300' };
+        return { step: 3, title: 'ຄຳເຫັນຂອງຮອງຫົວໜ້າພະແນກ ຜູ້ຊີ້ນຳໜ່ວຍງານ', icon: UserCheck, color: 'bg-blue-50 text-blue-800 border-blue-300' };
       case 'MANAGEMENT_APPROVAL':
-        return { step: 4, title: 'ຄຳເຫັນຂອງຫົວໜ້າພະແນກ', color: 'bg-indigo-50 text-indigo-800 border-indigo-300' };
+        return { step: 4, title: 'ຄຳເຫັນຂອງຫົວໜ້າພະແນກ', icon: ShieldCheck, color: 'bg-indigo-50 text-indigo-800 border-indigo-300' };
       case 'DIRECTOR_APPROVAL':
-        return { step: 5, title: 'ຄຳເຫັນຂອງ ຮອງ ຜອ ຜູ້ຊີ້ນຳພະແນກ', color: 'bg-purple-50 text-purple-800 border-purple-300' };
+        return { step: 5, title: 'ຄຳເຫັນຂອງ ຮອງ ຜອ ຜູ້ຊີ້ນຳພະແນກ', icon: Award, color: 'bg-purple-50 text-purple-800 border-purple-300' };
       case 'APPROVED':
-        return { step: 6, title: 'ອະນຸມັດຮຽບຮ້ອຍແລ້ວ', color: 'bg-emerald-50 text-emerald-800 border-emerald-300' };
+        return { step: 6, title: 'ອະນຸມັດຮຽບຮ້ອຍແລ້ວ', icon: CheckCircle2, color: 'bg-emerald-50 text-emerald-800 border-emerald-300' };
       case 'REJECTED':
-        return { step: 0, title: 'ສົ່ງກັບຄືນແກ້ໄຂ', color: 'bg-rose-50 text-rose-800 border-rose-300' };
+        return { step: 0, title: 'ສົ່ງກັບຄືນແກ້ໄຂ', icon: XCircle, color: 'bg-rose-50 text-rose-800 border-rose-300' };
       default:
-        return { step: 1, title: status, color: 'bg-slate-100 text-slate-700 border-slate-300' };
+        return { step: 1, title: status, icon: Clock, color: 'bg-slate-100 text-slate-700 border-slate-300' };
     }
   };
 
@@ -560,6 +562,7 @@ export const ApprovalWorkflowPage: React.FC = () => {
                             <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                               {doc.outgoingNumber}
                             </span>
+                            <StatusBadge status={doc.approvalStatus} size="sm" />
                             <span
                               className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${
                                 isUrgentDoc
@@ -711,6 +714,7 @@ export const ApprovalWorkflowPage: React.FC = () => {
                             <span className="font-mono text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
                               {doc.incomingNumber}
                             </span>
+                            <StatusBadge status={doc.status} size="sm" />
                             <span
                               className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${
                                 isUrgentDoc
@@ -1242,7 +1246,8 @@ export const ApprovalWorkflowPage: React.FC = () => {
                                 ສຳເລັດແລ້ວ
                               </span>
                             ) : (
-                              <span className="text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">
+                              <span className="inline-flex items-center gap-1 text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">
+                                <Clock className="w-2.5 h-2.5" />
                                 ລໍຖ້າ
                               </span>
                             )}
@@ -1639,9 +1644,16 @@ export const ApprovalWorkflowPage: React.FC = () => {
               </div>
               <div className="flex items-center justify-between pt-1 border-t border-slate-200">
                 <span className="font-bold text-slate-700">ຂັ້ນຕອນປັດຈຸບັນ:</span>
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-800">
-                  {getStepInfo(approvalModalDoc.approvalStatus).title}
-                </span>
+                {(() => {
+                  const step = getStepInfo(approvalModalDoc.approvalStatus);
+                  const Icon = step.icon;
+                  return (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-800">
+                      <Icon className="w-3.5 h-3.5" />
+                      {step.title}
+                    </span>
+                  );
+                })()}
               </div>
             </div>
 

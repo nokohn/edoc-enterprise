@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Shield, Search, Filter } from 'lucide-react';
+import {
+  Clock,
+  Shield,
+  Search,
+  Filter,
+  LogIn,
+  LogOut,
+  PlusCircle,
+  Edit,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  UserCheck,
+  Activity,
+} from 'lucide-react';
 import { api } from '../api/client';
 import { useTranslation } from '../i18n/LanguageContext';
 import { AuditLog } from '../types';
@@ -47,23 +61,23 @@ export const AuditLogPage: React.FC = () => {
   const getActionBadge = (action: string) => {
     switch (action) {
       case 'LOGIN':
-        return <Badge variant="info">ເຂົ້າສູ່ລະບົບ</Badge>;
+        return <Badge variant="info" size="sm" icon={<LogIn className="w-3 h-3 text-sky-600" />}>ເຂົ້າສູ່ລະບົບ</Badge>;
       case 'LOGOUT':
-        return <Badge variant="gray">ອອກຈາກລະບົບ</Badge>;
+        return <Badge variant="gray" size="sm" icon={<LogOut className="w-3 h-3 text-slate-500" />}>ອອກຈາກລະບົບ</Badge>;
       case 'CREATE':
-        return <Badge variant="success">ສ້າງຂໍ້ມູນໃໝ່</Badge>;
+        return <Badge variant="success" size="sm" icon={<PlusCircle className="w-3 h-3 text-emerald-600" />}>ສ້າງຂໍ້ມູນໃໝ່</Badge>;
       case 'UPDATE':
-        return <Badge variant="warning">ແກ້ໄຂຂໍ້ມູນ</Badge>;
+        return <Badge variant="warning" size="sm" icon={<Edit className="w-3 h-3 text-amber-600" />}>ແກ້ໄຂຂໍ້ມູນ</Badge>;
       case 'DELETE':
-        return <Badge variant="danger">ລຶບຂໍ້ມູນ</Badge>;
+        return <Badge variant="danger" size="sm" icon={<Trash2 className="w-3 h-3 text-rose-600" />}>ລຶບຂໍ້ມູນ</Badge>;
       case 'APPROVE':
-        return <Badge variant="success">ອະນຸມັດ</Badge>;
+        return <Badge variant="success" size="sm" icon={<CheckCircle2 className="w-3 h-3 text-emerald-600" />}>ອະນຸມັດ</Badge>;
       case 'REJECT':
-        return <Badge variant="danger">ປະຕິເສດ</Badge>;
+        return <Badge variant="danger" size="sm" icon={<XCircle className="w-3 h-3 text-rose-600" />}>ປະຕິເສດ</Badge>;
       case 'ASSIGN':
-        return <Badge variant="purple">ມອບໝາຍວຽກ</Badge>;
+        return <Badge variant="purple" size="sm" icon={<UserCheck className="w-3 h-3 text-purple-600" />}>ມອບໝາຍວຽກ</Badge>;
       default:
-        return <Badge variant="default">{action}</Badge>;
+        return <Badge variant="default" size="sm" icon={<Activity className="w-3 h-3 text-blue-600" />}>{action}</Badge>;
     }
   };
 

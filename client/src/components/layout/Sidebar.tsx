@@ -146,13 +146,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="flex items-center justify-between px-1 text-[11px] text-sky-200">
               <span className="font-medium">ເວີຊັນລະບົບ:</span>
               <span className="font-bold font-mono px-2 py-0.5 rounded-full bg-blue-500/30 text-white border border-blue-400/40 shadow-xs">
-                v11.10.2026
+                V02
               </span>
             </div>
           ) : (
-            <div className="text-center" title="ເວີຊັນ v11.10.2026">
+            <div className="text-center" title="ເວີຊັນ V02">
               <span className="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded bg-blue-500/30 text-white border border-blue-400/30 inline-block">
-                v11.10
+                V02
               </span>
             </div>
           )}

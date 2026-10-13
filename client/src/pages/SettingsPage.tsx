@@ -190,10 +190,10 @@ export const SettingsPage: React.FC = () => {
             <div className="p-3.5 rounded-2xl bg-gradient-to-br from-blue-50 to-sky-50/70 border border-blue-200/90 shadow-2xs">
               <p className="text-slate-500 font-medium">ເວີຊັນລ່າສຸດ (Version)</p>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-lg font-black font-mono text-blue-700">v11.10.2026</span>
+                <span className="text-lg font-black font-mono text-blue-700">V02</span>
                 <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-600 text-white shadow-2xs">LATEST</span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-1 font-medium">ອັບເດດວັນທີ 11 ຕຸລາ 2026</p>
+              <p className="text-[11px] text-slate-500 mt-1 font-medium">ເວີຊັນ Version V02 (Enterprise)</p>
             </div>
             <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/70 border border-emerald-200/90 shadow-2xs">
               <p className="text-slate-500 font-medium">ສະຖານະລະບົບ (Status)</p>

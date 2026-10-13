@@ -54,7 +54,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       data: { lastLoginAt: new Date() }
     });
 
-    const permissions = user.role.rolePermissions.map(rp => rp.permission.code);
+    const permissions = (user.role?.rolePermissions || [])
+      .map(rp => rp.permission?.code)
+      .filter(Boolean) as string[];
 
     const token = jwt.sign(
       { userId: user.id, username: user.username, roleId: user.roleId },
@@ -62,15 +64,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: (JWT_EXPIRES_IN as any) || '7d' }
     );
 
-    // Audit log
-    await logAudit({
-      userId: user.id,
-      userName: user.employee?.fullNameLao || user.username,
-      action: 'LOGIN',
-      module: 'AUTH',
-      description: `ຜູ້ໃຊ້ ${user.username} ເຂົ້າສູ່ລະບົບສຳເລັດ`,
-      req,
-    });
+    // Audit log (non-blocking)
+    try {
+      await logAudit({
+        userId: user.id,
+        userName: user.employee?.fullNameLao || user.username,
+        action: 'LOGIN',
+        module: 'AUTH',
+        description: `ຜູ້ໃຊ້ ${user.username} ເຂົ້າສູ່ລະບົບສຳເລັດ`,
+        req,
+      });
+    } catch (auditErr) {
+      console.warn('Audit log notice:', auditErr);
+    }
 
     res.json({
       success: true,
@@ -83,8 +89,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
           email: user.email,
           phone: user.phone,
           roleId: user.roleId,
-          roleName: user.role.name,
-          roleNameLao: user.role.nameLao,
+          roleName: user.role?.name || 'Staff',
+          roleNameLao: user.role?.nameLao || 'ພະນັກງານ',
           departmentId: user.departmentId,
           departmentName: user.department?.nameLao,
           positionName: user.position?.nameLao,

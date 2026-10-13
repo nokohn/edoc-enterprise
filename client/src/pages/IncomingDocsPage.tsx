@@ -385,12 +385,12 @@ export const IncomingDocsPage: React.FC = () => {
               className="py-1.5 px-2.5 rounded-lg border border-slate-300 bg-white text-slate-700 focus:outline-none focus:border-blue-500"
             >
               <option value="">{t.documents.filterByStatus} (ທັງໝົດ)</option>
-              <option value="NEW">ໃໝ່ (New)</option>
-              <option value="REGISTERED">ລົງທະບຽນແລ້ວ (Registered)</option>
-              <option value="REVIEWING">ກຳລັງກວດກາ (Reviewing)</option>
-              <option value="ASSIGNED">ມອບໝາຍແລ້ວ (Assigned)</option>
-              <option value="IN_PROGRESS">ກຳລັງດຳເນີນ (In Progress)</option>
-              <option value="COMPLETED">ສຳເລັດ (Completed)</option>
+              <option value="NEW">✨ ໃໝ່ (New)</option>
+              <option value="REGISTERED">📄 ລົງທະບຽນແລ້ວ (Registered)</option>
+              <option value="REVIEWING">🔍 ກຳລັງກວດກາ (Reviewing)</option>
+              <option value="ASSIGNED">👤 ມອບໝາຍແລ້ວ (Assigned)</option>
+              <option value="IN_PROGRESS">⏳ ກຳລັງດຳເນີນ (In Progress)</option>
+              <option value="COMPLETED">✅ ສຳເລັດ (Completed)</option>
             </select>
 
             <select

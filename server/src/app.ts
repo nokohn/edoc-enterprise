@@ -36,6 +36,7 @@ export const createApp = () => {
     res.json({
       status: 'ok',
       service: 'E-Document Management API',
+      version: 'V02',
       timestamp: new Date().toISOString(),
     });
   });

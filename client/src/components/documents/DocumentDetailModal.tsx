@@ -593,7 +593,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
                                       : 'text-slate-400 bg-slate-100'
                                   }`}
                                 >
-                                  {isPassed ? '✓ ສຳເລັດ' : isCurrent ? '⚡ ກຳລັງດຳເນີນ' : 'ລໍຖ້າ'}
+                                  {isPassed ? '✓ ສຳເລັດ' : isCurrent ? '⚡ ກຳລັງດຳເນີນ' : '⏳ ລໍຖ້າ'}
                                 </span>
                                 {idx < activeStages.length - 1 && (
                                   <ArrowRight

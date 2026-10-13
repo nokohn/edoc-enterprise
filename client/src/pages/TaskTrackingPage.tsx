@@ -10,9 +10,12 @@ import {
   User,
   Building,
   CheckCircle,
+  CheckCircle2,
   FileSpreadsheet,
   MessageSquare,
   Send,
+  UserCheck,
+  Eye,
 } from 'lucide-react';
 import { api } from '../api/client';
 import { useTranslation } from '../i18n/LanguageContext';
@@ -363,25 +366,29 @@ export const TaskTrackingPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-slate-700">ປ່ຽນສະຖານະວຽກງານ:</span>
                 <div className="flex flex-wrap gap-1.5">
-                  {['ASSIGNED', 'IN_PROGRESS', 'REVIEWING', 'COMPLETED'].map((st) => (
-                    <button
-                      key={st}
-                      onClick={() => handleUpdateStatus(st)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all ${
-                        selectedTask.status === st
-                          ? 'bg-blue-600 text-white border-blue-600'
-                          : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
-                      }`}
-                    >
-                      {st === 'ASSIGNED'
-                        ? 'ຮັບວຽກ'
-                        : st === 'IN_PROGRESS'
-                        ? 'ເລີ່ມດຳເນີນການ'
-                        : st === 'REVIEWING'
-                        ? 'ສົ່ງກວດກາ'
-                        : 'ສຳເລັດສົມບູນ'}
-                    </button>
-                  ))}
+                  {[
+                    { key: 'ASSIGNED', label: 'ຮັບວຽກ', icon: UserCheck },
+                    { key: 'IN_PROGRESS', label: 'ເລີ່ມດຳເນີນການ', icon: Clock },
+                    { key: 'REVIEWING', label: 'ສົ່ງກວດກາ', icon: Eye },
+                    { key: 'COMPLETED', label: 'ສຳເລັດສົມບູນ', icon: CheckCircle2 },
+                  ].map((st) => {
+                    const Icon = st.icon;
+                    const isSelected = selectedTask.status === st.key;
+                    return (
+                      <button
+                        key={st.key}
+                        onClick={() => handleUpdateStatus(st.key)}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                          isSelected
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5 shrink-0" />
+                        <span>{st.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
